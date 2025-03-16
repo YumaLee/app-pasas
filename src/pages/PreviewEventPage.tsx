@@ -366,22 +366,7 @@ export function PreviewEventPage() {
                 <div className="grid md:grid-cols-[1fr,350px] gap-8">
                     {/* Left Column */}
                     <div className="space-y-6 md:space-y-8 ">
-                     {/* Modal lock */}
-                        <div className="sticky top-0 left-0 w-full backdrop-blur-md z-50 flex items-center justify-center h-screen" hidden>
-                            <div className="bg-white/20 p-8 rounded-lg max-w-md w-full mx-4 text-center backdrop-blur-lg border border-white/20">
-                                <h2 className="text-2xl font-bold text-white mb-4">Acceso restringido</h2>
-                                <p className="text-white/90 mb-6">
-                                    Solo los invitados que hayan confirmado su asistencia podrán ver la actividad del evento y quién asistirá.
-                                </p>
-                                <button
-                                    onClick={() => console.log("Confirmar asistencia")}
-                                    className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded"
-                                >
-                                    Confirmar asistencia
-                                </button>
-                            </div>
-                        </div>
-
+        
 
                         {/* Desktop Title */}
                         <div className="flex items-start justify-between">
