@@ -5,12 +5,15 @@ import { EventSettings } from "@/components/EventSettings";
 import { BrowseTemplatesBanner } from "@/components/BrowseTemplatesBanner";
 import { ActionButtons } from "@/components/ActionButtons";
 import { Link, useNavigate } from "react-router-dom";
+import LoadingOverlay from "@/components/ui/loadingOverlay";
+import { HeaderHome } from "@/components/header/HeaderHome";
 
-export function TemplateCategoryPage() {
+export function TemplateNewPage() {
   const [selectedFont, setSelectedFont] = useState("Classic");
   const [showBanner, setShowBanner] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
-  const isHeaderVisible=true;
+  const [isLoading, setIsLoading] = useState(false);
+
   const navigate = useNavigate();
 
 
@@ -25,30 +28,28 @@ export function TemplateCategoryPage() {
       <div
         className="top-0 left-0 right-0 z-50 bg-[#000]/80 backdrop-blur-sm border-b border-white/10 transition-transform duration-300"
       >
-        <header className="max-w-[1400px] mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-            <img
-              src="https://pasas001.blob.core.windows.net/micontenedor-logo/logo.png"
-              alt="Pasas Logo"
-              className="h-8 w-auto"
-            />
-          </Link>
-          <div className="flex items-center gap-4">
-            <Link to="/faq" className="text-sm text-white/60 hover:text-white transition-colors">
-              FAQ
-            </Link>
-            <Button className="bg-[#7226ff] hover:bg-purple-700 text-white">
-              LOGIN
-            </Button>
-          </div>
-        </header>
+ 
+ 
+             {/* Fixed Header */}
+             <div
+                 className="top-0 left-0 right-0 z-50 bg-gradient-to-br from-blue-900 via-purple-900 transition-transform duration-300"
+             >
+                 <LoadingOverlay isLoading={isLoading} />
+                 <HeaderHome
+                     isCreate={false}
+                     checkedMotion={false}
+                     onReduceMotion={() => console.log('first')}
+                     onEdit={() => console.log('first')}
+                 />
+             </div>
+ 
       </div>
 
       {/* Browse Templates Banner */}
       <BrowseTemplatesBanner
         showBanner={showBanner}
         onCloseBanner={() => setShowBanner(false)}
-        isHeaderVisible={isHeaderVisible}
+        isHeaderVisible={false}
       />
 
       {/* Right Side Fixed Buttons - Desktop Only */}

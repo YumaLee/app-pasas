@@ -1,37 +1,26 @@
-
-import { useRef } from 'react'
-import { LoadScript, StandaloneSearchBox } from "@react-google-maps/api";
+// AutocompleteGoogle.tsx
+import { StandaloneSearchBox } from "@react-google-maps/api";
+import { useRef } from "react";
 import { Input } from "@/components/ui/input";
 
-const GOOGLE_MAPS_API_KEY = "AIzaSyCJw95Ci1CUQKejVjZ1FxDbQKDc6MyAMdI"; // Reemplázalo con tu clave de API
+interface AutocompleteGoogleProps {
+  onSelectLocation: (location: string) => void;
+}
 
-export function AutocompleteGoogle() {
+export function AutocompleteGoogle({ onSelectLocation }: AutocompleteGoogleProps) {
+  const inputRef = useRef<google.maps.places.SearchBox | null>(null);
 
-
-
-    const inputRef = useRef<google.maps.places.SearchBox | null>(null);
-
-    const handlePlaceChanges = () => {
-        if (!inputRef.current) return; // Verifica que no sea null antes de acceder 
-        const places = inputRef.current.getPlaces();
-        console.log(places);
+  const handlePlaceChanges = () => {
+    if (!inputRef.current) return;
+    const places = inputRef.current.getPlaces();
+    if (places && places.length > 0) {
+      onSelectLocation(places[0].formatted_address || "");
     }
+  };
 
-    return (
-        <div>
-            <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY} libraries={["places"]}>
-                <StandaloneSearchBox
-                    onLoad={(ref) => inputRef.current = ref}
-                    onPlacesChanged={handlePlaceChanges}
-                >
-                    <Input
-                        placeholder="Location"
-                        autoComplete="off"
-                        className="bg-transparent border-none focus-visible:ring-2 text-white/90 placeholder:text-white/50 h-auto p-1"
-                    />
-                </StandaloneSearchBox>
-            </LoadScript>
-        </div>
-
-    );
+  return (
+    <StandaloneSearchBox onLoad={(ref) => (inputRef.current = ref)} onPlacesChanged={handlePlaceChanges}>
+      <Input placeholder="Ubicación" autoComplete="off" className="bg-transparent border-none focus-visible:ring-2 text-white/90 placeholder:text-white/50 h-auto p-1" />
+    </StandaloneSearchBox>
+  );
 }

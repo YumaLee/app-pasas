@@ -203,7 +203,7 @@ export function EventoPage() {
   }
 
   const handlePreview = async (codigo: string) => {
-    navigate(`/event/preview/${codigo}`)
+    navigate(`/e/${codigo}`)
   }
 
   const renderTabContent = () => {
@@ -377,7 +377,7 @@ export function EventoPage() {
       />
 
       {/* Main Content */}
-      <main className="relative pt-24 md:pt-32 px-4">
+      <main className="relative pt-14 md:pt-22 px-4">
         <div className="max-w-[1400px] mx-auto">
           {/* Welcome Section */}
           <div className="mb-8 md:mb-12">
@@ -430,10 +430,10 @@ export function EventoPage() {
               </div>
               <div className="max-w-sm mx-auto">
                 <h3 className="text-xl text-white font-medium mb-2">
-                  No mutuals yet
+                Aún no hay mutuas
                 </h3>
                 <p className="text-white/70">
-                  Check back here when you go to your first event!
+                  ¡Vuelve a consultar esta página cuando vayas a tu primer evento!
                 </p>
               </div>
             </div>

@@ -27,7 +27,6 @@ import { PullGuest } from "@/components/PullGuest";
 import eventoService from "@/shared/services/EventoService";
 import { AutocompleteGoogle } from "./maps/AutocompleteGoogle";
 
-
 const fontStyles = ["Classic", "Eclectic", "Fancy", "Simple"] as const;
 
 const formSchema = z.object({
@@ -272,10 +271,7 @@ function EventForm({ selectedFont, onFontSelect }: EventFormProps) {
                   render={() => (
                     <FormItem>
                       <FormControl>
-                        <AutocompleteGoogle
-                        
-                        />
-            
+                        <AutocompleteGoogle onSelectLocation={(location) => form.setValue("ubicacion", location)} />
                       </FormControl>
                       <FormMessage className="text-red-400 mt-2" />
                     </FormItem>
@@ -284,6 +280,7 @@ function EventForm({ selectedFont, onFontSelect }: EventFormProps) {
               </div>
             </div>
           </div>
+
 
           {/* Spots */}
           <div className="bg-[#100229] rounded-lg p-4">

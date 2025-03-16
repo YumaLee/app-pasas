@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import {  useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import imageCompression from 'browser-image-compression';
 import { MoreHorizontal, Crown, MapPin, Music, Users, Link as LinkIcon, Camera, XCircle, ChevronLeft, FileArchive } from "lucide-react";
 import { formatInTimeZone } from "date-fns-tz";
 import { AddToCalendarButton } from 'add-to-calendar-button-react';
+import toast, { Toaster } from 'react-hot-toast';
+
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -22,6 +24,7 @@ import { useAuthStore } from "@/store/authStore";
 import LoadingOverlay from "@/components/ui/loadingOverlay";
 import { HeaderHome } from "@/components/header/HeaderHome";
 import ImageViewer from "@/components/evento/View/ImageViewer";
+import NotFoundPage from "./NotFoundPage";
 
 
 const iconSets = [
@@ -35,6 +38,7 @@ const iconSets = [
     { id: 8, name: "Lucky you", icon: "🍀", icons: ["🍀", "🎲", "❌"] }
 ];
 type RsvpType = 'going' | 'maybe' | 'cant';
+const notify = () => toast('Here is your toast.');
 
 export function PreviewEventPage() {
     const [openInvite, setOpenInvite] = useState(false);
@@ -57,7 +61,10 @@ export function PreviewEventPage() {
 
     const [dataItem, setDataItem] = useState<any>({});
     const [comentarios, setComentarios] = useState([]);
-    const [selectedImage, setSelectedImage] = useState("https://images.unsplash.com/photo-1614145121029-83a9f7b68bf4");
+    const [selectedImage, setSelectedImage] = useState("");
+
+    const isAuth = useAuthStore((state) => state.isAuth);
+    const [error, setError] = useState(false);
 
     const hasFetched = useRef(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -77,19 +84,38 @@ export function PreviewEventPage() {
                 comentarioService.getByCode(codigo)
             ]);
 
+            debugger
 
-            var data = eventoData.data;
-            setItemEvent(data);
-            setSelectedIcon(data.iconRsvp);
-            setDataItem({
-                idusuario: _profile?.id,
-                idEvento: data.id,
-                avatar: _profile?.foto,
-                usuario: _profile?.nombre + '' + _profile?.apellidoPaterno
-            })
-            setComentarios(comentariosData.data);
-            setCountAsistente(data.countAsistencia);
-            setIsLoading(false);
+            if (eventoData.status === 200) {
+
+                var data = eventoData.data;
+                setItemEvent(data);
+                setSelectedIcon(data.iconRsvp);
+                setDataItem({
+                    idusuario: _profile?.id,
+                    idEvento: data.id,
+                    avatar: _profile?.foto,
+                    usuario: _profile?.nombre + '' + _profile?.apellidoPaterno
+                })
+                setComentarios(comentariosData.data);
+                setCountAsistente(data.countAsistencia);
+                setIsLoading(false);
+
+                toast.success('Successfully!', {
+                    icon: '👏',
+                })
+            }
+            else {
+
+                setError(true);
+                toast.error('not found data!', {
+                    icon: '👏',
+                })
+
+            }
+
+
+
         } catch (error) {
             console.error("Error al obtener los datos:", error);
         }
@@ -122,9 +148,7 @@ export function PreviewEventPage() {
 
 
     const handleRsvpClick = (index: number) => {
-        //       {index === 0 ? 'Going' : index === 1 ? 'Maybe' : "Can't Go"}
         var type = index === 0 ? 'going' : index === 1 ? 'maybe' : "cant";
-
         setSelectedRsvp(type as RsvpType)
 
         setShowRsvpModal(true);
@@ -195,6 +219,9 @@ export function PreviewEventPage() {
         //    setShowRsvpModal(false);
 
     }
+
+    if (error || !itemEvent) return <NotFoundPage />;
+
     return (
 
         <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-purple-800">
@@ -280,21 +307,27 @@ export function PreviewEventPage() {
                 : null
             }
 
-
-
             {/* Fixed Header */}
             <div
                 className="top-0 left-0 right-0 z-50 bg-gradient-to-br from-blue-900 via-purple-900 transition-transform duration-300"
             >
                 <LoadingOverlay isLoading={isLoading} />
-                <HeaderHome
-                    isCreate={false}
-                    checkedMotion={false}
-                    onReduceMotion={() => console.log('first')}
-                    onEdit={() => console.log('first')}
+                {isAuth ? (
+                    <HeaderHome
+                        isCreate={false}
+                        checkedMotion={false}
+                        onReduceMotion={() => console.log('first')}
+                        onEdit={() => console.log('first')}
+                    />
+                ) : null}
+
+            </div>
+            <div>
+                <Toaster
+                    position="top-center"
+                    reverseOrder={false}
                 />
             </div>
-
 
             <div className="max-w-7xl mx-auto px-4 py-8 md:py-8">
                 {/* Mobile Event Image */}
@@ -332,7 +365,24 @@ export function PreviewEventPage() {
 
                 <div className="grid md:grid-cols-[1fr,350px] gap-8">
                     {/* Left Column */}
-                    <div className="space-y-6 md:space-y-8">
+                    <div className="space-y-6 md:space-y-8 ">
+                     {/* Modal lock */}
+                        <div className="sticky top-0 left-0 w-full backdrop-blur-md z-50 flex items-center justify-center h-screen" hidden>
+                            <div className="bg-white/20 p-8 rounded-lg max-w-md w-full mx-4 text-center backdrop-blur-lg border border-white/20">
+                                <h2 className="text-2xl font-bold text-white mb-4">Acceso restringido</h2>
+                                <p className="text-white/90 mb-6">
+                                    Solo los invitados que hayan confirmado su asistencia podrán ver la actividad del evento y quién asistirá.
+                                </p>
+                                <button
+                                    onClick={() => console.log("Confirmar asistencia")}
+                                    className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded"
+                                >
+                                    Confirmar asistencia
+                                </button>
+                            </div>
+                        </div>
+
+
                         {/* Desktop Title */}
                         <div className="flex items-start justify-between">
                             <div>
@@ -394,7 +444,7 @@ export function PreviewEventPage() {
 
                                         <AddToCalendarButton
                                             name={itemEvent.titulo}
-                                            options={['Google','Outlook.com','MicrosoftTeams']}
+                                            options={['Google', 'Outlook.com', 'MicrosoftTeams']}
                                             location={itemEvent.ubicacion}
                                             startDate={itemEvent.fechaStart}
                                             endDate={itemEvent.fechaEnd}
@@ -468,7 +518,7 @@ export function PreviewEventPage() {
                             <Button
                                 variant="ghost"
                                 className="text-white hover:bg-white/10"
-                                onClick={() => setOpenInvite(!openInvite)}
+                                onClick={() => { setOpenInvite(!openInvite), notify() }}
                             >
                                 {openInvite ? "ON" : "OFF"}
                             </Button>
@@ -519,7 +569,6 @@ export function PreviewEventPage() {
                                             className="h-4 w-4 absolute top-3 right-3  text-white aspect-square"
                                             onClick={handleClearImage}
                                         >
-                                            <XCircle />
                                         </Button>
                                     </div> : null
                                 }
@@ -534,15 +583,15 @@ export function PreviewEventPage() {
                                                 className="aspect-square rounded-lg overflow-hidden max-h-[200px]"
                                                 key={index}
                                             >
-                                        
-                                                <div  className="w-full h-full object-cover">
+
+                                                <div className="w-full h-full object-cover">
                                                     <ImageViewer
                                                         imageUrl={item.imagenUrl}
                                                         userName="Julia Lopes"
                                                         userAvatar="https://pasasfile.blob.core.windows.net/pasas-contenedor/foto-evento/albun_evento_bmr6e-b074c4d97c694c1.jpg"
                                                         timeAgo="44 minutes ago"
-                                                    />   
-                                                     </div>
+                                                    />
+                                                </div>
 
                                             </div>
 
@@ -552,7 +601,7 @@ export function PreviewEventPage() {
                                     <>
 
                                         <div className="aspect-square rounded-lg bg-white/5 overflow-hidden max-h-[200px]">
-                                        <p className="text-gray-500 text-center mt-8">No hay imágenes disponibles</p>
+                                            <p className="text-gray-500 text-center mt-8">No hay imágenes disponibles</p>
 
                                         </div>
                                         <div className="aspect-square rounded-lg bg-white/5 overflow-hidden max-h-[200px]">

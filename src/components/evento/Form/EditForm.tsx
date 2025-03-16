@@ -115,7 +115,7 @@ function EditForm({ dataItem, selectedFont, onFontSelect, onSave }: EventFormPro
     if (dataItem) {
       setSelectedImage(dataItem.imagenUrl);
       setSelectedIcon(dataItem.iconRsvp);
-      
+
       Object.entries(dataItem).forEach(([key, value]) => {
         form.setValue(key as keyof FormValues, value as any);
       });
@@ -319,14 +319,7 @@ function EditForm({ dataItem, selectedFont, onFontSelect, onSave }: EventFormPro
                   render={() => (
                     <FormItem>
                       <FormControl>
-                       {/*  <Input
-                          {...field}
-                          placeholder="Location"
-                          autoComplete="off"
-                          className="bg-transparent border-none focus-visible:ring-0 text-white/90 placeholder:text-white/50 h-auto p-0"
-                        /> */}
-                        <AutocompleteGoogle/>
-                        
+                        <AutocompleteGoogle onSelectLocation={(location) => form.setValue("ubicacion", location)} />
                       </FormControl>
                       <FormMessage className="text-red-400 mt-2" />
                     </FormItem>

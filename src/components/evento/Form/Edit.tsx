@@ -23,7 +23,7 @@ export function EditEvento() {
 
     const handleSave = async (data: any) => {
         console.log(data)
-        data.codigo = codigo;
+        data.codigo = codigo; 
 
         var response = await eventoService.actualizar(data);
         if (response.status === 200) {
