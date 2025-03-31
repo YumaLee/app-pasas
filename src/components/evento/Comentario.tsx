@@ -1,9 +1,19 @@
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, Image, SmilePlus, GiftIcon, XCircle, CheckCircle } from "lucide-react";
+import { MoreHorizontal, Image, SmilePlus, GiftIcon, XCircle, CheckCircle, Trash, PinIcon } from "lucide-react";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import comentarioService from "@/shared/services/ComentarioService";
+import { useAuthStore } from "@/store/authStore";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import toast from 'react-hot-toast';
 
 
 interface ActionButtonsProps {
@@ -21,16 +31,17 @@ export function ComentarioActivity({
     setComentarios
 }: ActionButtonsProps) {
 
-    const [comment, setComment] = useState("");
-    const [selectedImage, setSelectedImage] = useState("https://images.unsplash.com/photo-1614145121029-83a9f7b68bf4");
+    const [comment, setComment] = useState<string>("");
+    const [selectedImage, setSelectedImage] = useState<string>("");
     const fileInputRef = useRef<HTMLInputElement>(null);
 
+    const _profile = useAuthStore((state) => state.profile);
 
     const handleSave = async () => {
         //const formData = new FormData();
         const command = {
             eventoID: dataItem.idEvento,
-            usuarioID: dataItem.idusuario,
+            idUsuario: dataItem.idusuario,
             comentario: comment,
             avatar: dataItem.avatar,
             fecha: null,
@@ -41,10 +52,11 @@ export function ComentarioActivity({
         var response = await comentarioService.registrar(command);
 
         if (response.status === 200) {
-            const comentarioAgregado = response.data;
-
-            setComentarios((prev: any) => [...prev, comentarioAgregado]);
+            setComentarios((prev: any) => [command, ...prev]);
             setComment("");
+            toast.success('Successfully!', {
+                icon: '👏',
+            })
         }
         if (response.status === 400) {
             //dialog.warning(<ul>{response.data.messages.map(item => (<li>{item}</li>))}</ul>);
@@ -53,12 +65,50 @@ export function ComentarioActivity({
     }
 
 
+    const handleDelete = async (item: any) => {
 
+        var response = await comentarioService.eliminar({ id: item.id, idUsuario: item.idUsuario });
+        if (response.status === 200) {
+            setComentarios((prev: any[]) => prev.filter((comentario) => comentario.id !== item.id));
+            toast.success('Successfully!', {
+                icon: '👏',
+            })
+        }
+        if (response.status === 400) {
+            //dialog.warning(<ul>{response.data.messages.map(item => (<li>{item}</li>))}</ul>);
+            return;
+        }
+    }
 
-    const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
+    const handleKeyDown = async (event: React.KeyboardEvent<HTMLElement>) => {
         if (event.currentTarget instanceof HTMLInputElement || event.currentTarget instanceof HTMLTextAreaElement) {
             if (event.key === "Enter") {
-                console.log("Valor del input:", comment);
+                let command = {
+                    id: 0,
+                    eventoID: dataItem.idEvento,
+                    idUsuario: dataItem.idusuario,
+                    comentario: comment.trim(),
+                    avatar: dataItem.avatar,
+                    fecha: null,
+                    imagenUrl: null,
+                    fijado: false,
+                    usuario: dataItem.usuario
+                };
+                var response = await comentarioService.registrar(command);
+
+                if (response.status === 200) {
+                    command.id = response.data;
+                    setComentarios((prev: any) => [command, ...prev]);
+                    setComment("");
+                    toast.success('Successfully!', {
+                        icon: '👏',
+                    })
+                    console.log(comentarios)
+                }
+                if (response.status === 400) {
+                    //dialog.warning(<ul>{response.data.messages.map(item => (<li>{item}</li>))}</ul>);
+                    return;
+                }
             }
         }
     };
@@ -101,12 +151,19 @@ export function ComentarioActivity({
     return (
         <>
             <div className="space-y-4">
-                <h2 className="text-xl md:text-2xl font-bold text-white">Activity</h2>
+                <h2 className="text-xl md:text-2xl font-bold text-white">Actividad</h2>
 
                 {/* Comment Input */}
                 <div className="flex items-start gap-3">
                     <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-pink-400 flex-shrink-0 flex items-center justify-center text-white text-sm">
-                        JL
+                        {_profile?.foto ?
+                            <Avatar>
+                                <AvatarImage
+                                    src={_profile?.foto}
+
+                                />
+                            </Avatar> : <span>{(_profile?.nombre)?.substring(0, 2)} </span>
+                        }
                     </div>
                     <div className="flex-1 bg-white/10 rounded-lg p-3">
                         <div className="flex items-center gap-2 mb-2">
@@ -184,75 +241,20 @@ export function ComentarioActivity({
                 </div>
 
                 {/* Activity Item */}
-                <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden flex-shrink-0">
-                        <img
-                            src="https://images.unsplash.com/photo-1494790108377-be9c29b29330"
-                            alt="julia Lopes"
-                            className="w-full h-full object-cover"
-                        />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
-                            <div className="flex items-center gap-2 flex-wrap">
-                                <span className="text-purple-400 font-medium text-sm md:text-base">julia Lopes</span>
-                                <span className="text-white/50 text-sm">added to Photo Album</span>
-                                <span className="text-white/50 text-xs">about 2 hours ago</span>
-                            </div>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="text-white/50 hover:text-white hover:bg-white/10 h-8 w-8"
-                            >
-                                <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                        </div>
-                        <div className="rounded-lg overflow-hidden mb-3 w-[300px]">
-                            <img
-                                src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3"
-                                alt="Added photo"
-                                className="w-full h-full object-cover"
-                            />
-                        </div>
-                        <div className="flex flex-wrap items-center gap-2">
-                            <div className="flex flex-wrap items-center gap-2">
-                                {['🤯', '🥺', '⭐', '🥰'].map((emoji, index) => (
-                                    <Button
-                                        key={index}
-                                        variant="ghost"
-                                        className="h-7 md:h-8 px-2 md:px-3 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center gap-1"
-                                    >
-                                        <span className="text-sm md:text-base">{emoji}</span>
-                                        <span className="text-xs md:text-sm">1</span>
-                                    </Button>
-                                ))}
-                                <Button
-                                    variant="ghost"
-                                    className="h-7 md:h-8 px-2 md:px-3 rounded-full bg-white/10 hover:bg-white/20 text-white"
-                                >
-                                    <SmilePlus className="h-4 w-4" />
-                                </Button>
-                            </div>
-                            <Button
-                                variant="ghost"
-                                className="h-7 md:h-8 px-2 md:px-3 text-white/50 hover:text-white hover:bg-white/10 text-sm"
-                            >
-                                Reply
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-
                 {comentarios.map((comentario, index) => (
                     <div
                         key={index}
                         className="flex items-start gap-3">
                         <div className="w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden flex-shrink-0">
-                            <img
-                                src={comentario.avatar}
-                                alt={comentario.usuario}
-                                className="w-full h-full object-cover"
-                            />
+
+                            {comentario?.avatar ?
+                                <Avatar>
+                                    <AvatarImage
+                                        src={comentario?.avatar}
+
+                                    />
+                                </Avatar> : <span>{(comentario?.usuario)?.substring(0, 2)} </span>
+                            }
                         </div>
                         <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
@@ -267,13 +269,53 @@ export function ComentarioActivity({
 
 
                                 </div>
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="text-white/50 hover:text-white hover:bg-white/10 h-8 w-8"
-                                >
-                                    <MoreHorizontal className="h-4 w-4" />
-                                </Button>
+
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="text-white/50 hover:text-white hover:bg-white/10 h-8 w-8"
+                                        >
+                                            <MoreHorizontal className="h-4 w-4" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+
+                                    {(comentario.idUsuario == _profile?.id) ?
+
+                                        <DropdownMenuContent className="w-48 bg-[#1A0505] border-neutral-800">
+                                            <DropdownMenuItem className="text-white/70 hover:text-white focus:text-white focus:bg-white/10">
+
+                                                <div onClick={() => handleDelete(comentario)}
+                                                    className="flex items-center gap-3 text-white/70">
+                                                    <Button className="rounded-full w-9 h-10 bg-white/10 hover:bg-white/20 text-white"
+                                                        onClick={() => console.log('link')}
+                                                    >
+                                                        <Trash className="h-4 w-4 flex-shrink-0" />
+                                                    </Button>
+                                                    <span> Eliminar</span>
+                                                </div>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem className="text-white/70 hover:text-white focus:text-white focus:bg-white/10">
+                                                <div
+                                                    className="flex items-center gap-3 text-white/70">
+                                                    <Button className="rounded-full w-9 h-10 bg-white/10 hover:bg-white/20 text-white"
+
+                                                    >
+                                                        <PinIcon className="h-4 w-4 flex-shrink-0" />
+                                                    </Button>
+                                                    <span> Fijar</span>
+
+
+                                                </div>
+                                            </DropdownMenuItem>
+
+                                        </DropdownMenuContent> : null
+
+                                    }
+
+                                </DropdownMenu>
+
                             </div>
                             {comentario.imagenUrl ?
 

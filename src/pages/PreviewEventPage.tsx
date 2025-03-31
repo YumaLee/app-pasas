@@ -6,6 +6,7 @@ import { MoreHorizontal, Crown, MapPin, Music, Users, Link as LinkIcon, Camera, 
 import { formatInTimeZone } from "date-fns-tz";
 import { AddToCalendarButton } from 'add-to-calendar-button-react';
 import toast, { Toaster } from 'react-hot-toast';
+import { loadStripe } from "@stripe/stripe-js";
 
 import {
     DropdownMenu,
@@ -220,6 +221,23 @@ export function PreviewEventPage() {
 
     }
 
+    const handlePayment = async () => {
+        setIsLoading(true);
+        const RUTA = import.meta.env.STRIPE_PUBLISHABLE_KEY
+        const response = await eventoService.payment({ amount: 25, eventName: itemEvent.titulo,codigo:itemEvent.codigo })
+        if (response.status === 200) {
+            const { sessionId } = response.data;
+            const stripe = await loadStripe(RUTA); // Tu clave pública de Stripe
+            setIsLoading(false);
+
+            await stripe?.redirectToCheckout({ sessionId });
+        } else {
+            alert('response error payment');
+        }
+        setIsLoading(false);
+
+    };
+
     if (error || !itemEvent) return <NotFoundPage />;
 
     return (
@@ -366,7 +384,6 @@ export function PreviewEventPage() {
                 <div className="grid md:grid-cols-[1fr,350px] gap-8">
                     {/* Left Column */}
                     <div className="space-y-6 md:space-y-8 ">
-        
 
                         {/* Desktop Title */}
                         <div className="flex items-start justify-between">
@@ -641,8 +658,11 @@ export function PreviewEventPage() {
                             <div className="bg-white/10 rounded-lg p-4">
                                 <div className="flex items-center justify-between mb-4">
                                     <h3 className="text-white font-medium">Guest List</h3>
-                                    <Button variant="ghost" className="text-white/70 hover:text-white">
-                                        See all
+                                    <Button
+                                        onClick={handlePayment}
+                                        disabled={isLoading}
+                                        variant="primary" className="text-white/70 hover:text-white">
+                                        Pagar
                                     </Button>
                                 </div>
                                 <div className="flex -space-x-2">

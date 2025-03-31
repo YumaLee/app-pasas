@@ -22,6 +22,16 @@ class EventoService {
         }
     }
 
+    async payment(data: any): Promise<AxiosResponse | any> {
+        try {
+            const response: AxiosResponse = await axios.post(`${RUTA}/evento/payment`, data);
+            return response;
+        } catch (error) {
+            console.error(error);
+            return (error as AxiosError).response ? (error as AxiosError).response : {};
+        }
+    }
+
     async eliminar(data: any): Promise<AxiosResponse | any> {
         try {
             const config = {
@@ -71,7 +81,7 @@ class EventoService {
 
     async getByCode(code: string, telefono: string): Promise<AxiosResponse | any> {
         try {
-            const response: AxiosResponse = await axios.get(`${RUTA}/evento/${code}/${telefono}`);
+            const response: AxiosResponse = await axios.get(`${RUTA}/evento/get?codigo=${code}`);
             return response;
         } catch (error) {
             console.error(error);

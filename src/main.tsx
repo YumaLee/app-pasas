@@ -5,9 +5,9 @@ import Routes from './Routes/Index.tsx';
 import './index.css';
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+  <>
     <BrowserRouter>
       <Routes />
     </BrowserRouter>
-  </StrictMode>
+  </>
 );

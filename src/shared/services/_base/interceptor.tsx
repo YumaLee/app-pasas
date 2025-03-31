@@ -6,6 +6,7 @@ import auth from '../../utility/auth';
 const ignoreInterceptions: string[] = [
     `${RUTA}/verify-phone`,
     `${RUTA}/verify-phone/confirmar`,
+    `${RUTA}/evento/get`,
 ];
 
 interface User {

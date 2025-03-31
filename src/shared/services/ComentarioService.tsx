@@ -12,6 +12,15 @@ class ComentarioService {
         }
     }
 
+    async eliminar(data: any): Promise<AxiosResponse | any> {
+        try {
+            const response: AxiosResponse = await axios.put(`${RUTA}/comentario/eliminar`, data);
+            return response;
+        } catch (error) {
+            console.error(error);
+            return (error as AxiosError).response ? (error as AxiosError).response : {};
+        }
+    }
 
     async subirImagen(file: any): Promise<AxiosResponse | any> {
         const formData = new FormData();

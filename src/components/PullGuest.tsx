@@ -128,14 +128,6 @@ export function PullGuest({ open, onOpenChange, onContinue }: PullGuestProps) {
         <DialogHeader>
           <div className="flex items-center justify-between">
             <DialogTitle className="text-2xl font-bold">Find a Time</DialogTitle>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-white/50 hover:text-white"
-              onClick={() => onOpenChange(false)}
-            >
-              <X className="h-5 w-5" />
-            </Button>
           </div>
           <div className="mt-4 space-y-2">
             <p className="text-white/90">

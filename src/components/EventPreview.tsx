@@ -52,7 +52,7 @@ export function EventPreview({ selectedImage, selectedIcon, onEditClick, onSelec
           <div className="flex items-center gap-2 text-neutral-400">
             <span>Open Invite</span>
           </div>
-          <span className="text-neutral-400">Turned Off</span>
+          <span className="text-neutral-400">Apagado</span>
         </div>
 
         {/* RSVP Options */}

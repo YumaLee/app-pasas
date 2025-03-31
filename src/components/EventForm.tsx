@@ -3,11 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { User, Users, MapPin, DollarSign } from "lucide-react";
+import { User, Users, MapPin, DollarSign,Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatISO } from "date-fns";
-
 import { QuickActionPopover } from "@/components/QuickActionPopover";
 import { useAuthStore } from "@/store/authStore";
 import { DateRange, DateRangePicker } from "@/components/ui/datepicker"
@@ -26,6 +25,7 @@ import { PullGuest } from "@/components/PullGuest";
 
 import eventoService from "@/shared/services/EventoService";
 import { AutocompleteGoogle } from "./maps/AutocompleteGoogle";
+import { EmojiModal } from "./EmojiModal";
 
 const fontStyles = ["Classic", "Eclectic", "Fancy", "Simple"] as const;
 
@@ -70,13 +70,14 @@ const getFontStyle = (font: string) => {
 };
 
 function EventForm({ selectedFont, onFontSelect }: EventFormProps) {
-  const [selectedImage, setSelectedImage] = useState("https://images.unsplash.com/photo-1614145121029-83a9f7b68bf4");
+  const [selectedImage, setSelectedImage] = useState("https://images.pexels.com/photos/1317365/pexels-photo-1317365.jpeg");
   const [selectedIcon, setSelectedIcon] = useState(1);
   const navigate = useNavigate();
 
   const [showImagePicker, setShowImagePicker] = useState(false);
   const [showPullGuest, setShowPullGuest] = useState(false);
   const _profile = useAuthStore((state) => state.profile);
+  const [emojiModal, setEmojiModal] = useState(false);
 
 
   const [dateValue, setDateValue] = React.useState<DateRange | undefined>(undefined)
@@ -142,8 +143,15 @@ function EventForm({ selectedFont, onFontSelect }: EventFormProps) {
     }
   };
 
+  const handleChangeEmoji = (e: any) => {
+    setEmojiModal(false);
+    form.setValue("titulo", form.getValues("titulo") + e);
+  };
+
+
   return (
     <div className="grid md:grid-cols-[1fr,400px] gap-8">
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           {/* Event Name Input */}
@@ -185,6 +193,16 @@ function EventForm({ selectedFont, onFontSelect }: EventFormProps) {
                     {font}
                   </Button>
                 ))}
+
+                <Button
+                  key={5}
+                  type="button"
+                  variant={"secondary"}
+                  className="rounded-full bg-[#7226ff] text-white hover:bg-purple-700"
+                  onClick={() => setEmojiModal(!emojiModal)}
+                >
+                  Emoji 😊
+                </Button>
               </div>
             </div>
           </div>
@@ -377,19 +395,24 @@ function EventForm({ selectedFont, onFontSelect }: EventFormProps) {
           </div>
 
           {/* Description */}
-          <div className="bg-[#100229] rounded-lg p-4">
+          <div className="bg-[#100229] rounded-lg p-4 relative">
             <FormField
               control={form.control}
               name="descripcion"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <textarea
-                      {...field}
-                      autoComplete="off"
-                      placeholder="Add a description of your event"
-                      className="w-full bg-transparent border-none focus:outline-none text-white/90 placeholder:text-white/50 resize-none h-32"
-                    />
+                    <div className="relative">
+                      <textarea
+                        {...field}
+                        autoComplete="off"
+                        placeholder="Add a description of your event"
+                        className="w-full bg-transparent border-none focus:outline-none text-white/90 placeholder:text-white/50 resize-none h-32"
+                      />
+                      <div className="absolute right-3 top-3 text-purple-400">
+                        <span className="text-2xl" >😊</span>
+                      </div>
+                    </div>
                   </FormControl>
                   <FormMessage className="text-red-400 mt-2" />
                 </FormItem>
@@ -420,9 +443,12 @@ function EventForm({ selectedFont, onFontSelect }: EventFormProps) {
           <div className="fixed bottom-6 right-6 z-50 hidden md:block">
             <Button
               type="submit"
-              className="bg-[#000] hover:bg-[#151515] text-white px-12 py-6 text-lg font-medium rounded-lg">
-              SAVE DRAFT
+              className="bg-[#000] hover:bg-[#151515] text-white px-12 py-6 text-lg font-medium rounded-lg flex items-center gap-2"
+              >
+              Guardar
+              <Save className="w-5 h-5" />
             </Button>
+
           </div>
         </form>
       </Form>
@@ -435,17 +461,32 @@ function EventForm({ selectedFont, onFontSelect }: EventFormProps) {
 
       />
 
-      <ImagePicker
-        open={showImagePicker}
-        onOpenChange={setShowImagePicker}
-        onSelectImage={handleImageSelect}
-      />
+      {/* open image selected*/}
 
-      <PullGuest
-        open={showPullGuest}
-        onOpenChange={setShowPullGuest}
-        onContinue={handlePullGuestContinue}
-      />
+      {showImagePicker && (
+        <ImagePicker
+          open={showImagePicker}
+          onOpenChange={setShowImagePicker}
+          onSelectImage={handleImageSelect}
+        />
+      )}
+
+      {showPullGuest && (
+        <PullGuest
+          open={showPullGuest}
+          onOpenChange={setShowPullGuest}
+          onContinue={handlePullGuestContinue}
+        />
+      )}
+
+      {emojiModal && (
+        <EmojiModal
+          open={emojiModal}
+          onOpen={() => setEmojiModal(!emojiModal)}
+          onAcept={handleChangeEmoji}
+        />
+      )}
+
     </div>
   );
 }
