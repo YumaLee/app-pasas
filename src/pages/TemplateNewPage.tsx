@@ -7,11 +7,14 @@ import { ActionButtons } from "@/components/ActionButtons";
 import { Link, useNavigate } from "react-router-dom";
 import LoadingOverlay from "@/components/ui/loadingOverlay";
 import { HeaderHome } from "@/components/header/HeaderHome";
+import Drawer from "@/components/drawer/Drawer";
 
 export function TemplateNewPage() {
   const [selectedFont, setSelectedFont] = useState("Classic");
   const [showBanner, setShowBanner] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
+  const [showDrawer, setShowDrawer] = useState(false);
+
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -28,21 +31,19 @@ export function TemplateNewPage() {
       <div
         className="top-0 left-0 right-0 z-50 bg-[#000]/80 backdrop-blur-sm border-b border-white/10 transition-transform duration-300"
       >
- 
- 
-             {/* Fixed Header */}
-             <div
-                 className="top-0 left-0 right-0 z-50 bg-gradient-to-br from-blue-900 via-purple-900 transition-transform duration-300"
-             >
-                 <LoadingOverlay isLoading={isLoading} />
-                 <HeaderHome
-                     isCreate={false}
-                     checkedMotion={false}
-                     onReduceMotion={() => console.log('first')}
-                     onEdit={() => console.log('first')}
-                 />
-             </div>
- 
+        {/* Fixed Header */}
+        <div
+          className="top-0 left-0 right-0 z-50 bg-gradient-to-br from-blue-900 via-purple-900 transition-transform duration-300"
+        >
+          <LoadingOverlay isLoading={isLoading} />
+          <HeaderHome
+            isCreate={false}
+            checkedMotion={false}
+            onReduceMotion={() => console.log('first')}
+            onEdit={() => console.log('first')}
+          />
+        </div>
+
       </div>
 
       {/* Browse Templates Banner */}
@@ -56,9 +57,8 @@ export function TemplateNewPage() {
       <div className="fixed right-0 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col">
         <div className="w-[100px] bg-[#100229] py-6 flex flex-col items-center gap-8">
           <ActionButtons
-            onSettingsClick={() => setShowSettings(true)}
+            onSettingsClick={() => setShowDrawer(true)}
             onPreviewClick={() => navigate('/preview')}
-
           />
         </div>
       </div>
@@ -70,6 +70,8 @@ export function TemplateNewPage() {
             selectedFont={selectedFont}
             onFontSelect={setSelectedFont}
             onSave={handleSave}
+            onSettingsClick={() => setShowDrawer(true)}
+
           />
         </div>
       </main>
@@ -78,6 +80,15 @@ export function TemplateNewPage() {
         open={showSettings}
         onOpenChange={setShowSettings}
       />
+
+      {/* Drawer */}
+
+
+      <Drawer
+        isOpen={showDrawer}
+        onClose={() => setShowDrawer(!showDrawer)}
+      />
+
 
       {/* Mobile Footer Menu */}
       <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden">

@@ -10,9 +10,7 @@ export function LoginHeader() {
           className="h-8 w-auto"
         />
       </Link>
-      <Link to="/faq" className="text-sm text-white/60 hover:text-white transition-colors">
-        FAQ
-      </Link>
+ 
     </header>
   );
 }

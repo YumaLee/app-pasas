@@ -76,9 +76,7 @@ export function EditEvento() {
                         />
                     </Link>
                     <div className="flex items-center gap-4">
-                        <Link to="/faq" className="text-sm text-white/60 hover:text-white transition-colors">
-                            FAQ
-                        </Link>
+                    
                         <Button className="bg-[#7226ff] hover:bg-purple-700 text-white">
                             LOGIN
                         </Button>

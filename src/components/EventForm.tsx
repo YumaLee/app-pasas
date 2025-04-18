@@ -3,13 +3,16 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { User, Users, MapPin, DollarSign,Save } from "lucide-react";
+import { User, Users, MapPin, DollarSign, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatISO } from "date-fns";
 import { QuickActionPopover } from "@/components/QuickActionPopover";
 import { useAuthStore } from "@/store/authStore";
 import { DateRange, DateRangePicker } from "@/components/ui/datepicker"
+import { usePaymentStore } from "@/store/settingPayment";
+import { usePrivacyStore } from "@/store/privaceStore";
+import toast, { Toaster } from 'react-hot-toast';
 
 import {
   Form,
@@ -36,20 +39,27 @@ const formSchema = z.object({
   dateRange: z.object({ from: z.date(), to: z.date(), }).optional(),
   fechaStart: z.string().optional(),
   fechaEnd: z.string().optional(),
-
+  idTipoMoneda: z.number().optional(),
   host: z.string().optional(),
   imagenUrl: z.string().optional(),
   ubicacion: z.string().optional(),
   capacidadMaxima: z.preprocess((value) => { if (value === "") return 0; return Number(value); }, z.union([z.number().int().positive(), z.nan()]).optional()),
-  cost: z.string().optional(),
+  precio: z.coerce.number().optional(),
   descripcion: z.string().optional(),
-  iconRsvp: z.number().optional()
+  iconRsvp: z.number().optional(),
+  jsonPrivacy: z.string().optional(),
+
+  mostrarMarcaTiempo: z.boolean().optional(),
+  mostrarNombreInvitado: z.boolean().optional(),
+  mostrarNumeroInvitado: z.boolean().optional(),
+  password: z.string().optional()
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
 interface EventFormProps {
   selectedFont: string;
+  onSettingsClick: () => void;
   onFontSelect: (font: string) => void;
   onSave: (font: string) => void;
 }
@@ -69,7 +79,7 @@ const getFontStyle = (font: string) => {
   }
 };
 
-function EventForm({ selectedFont, onFontSelect }: EventFormProps) {
+function EventForm({ selectedFont, onFontSelect, onSettingsClick }: EventFormProps) {
   const [selectedImage, setSelectedImage] = useState("https://images.pexels.com/photos/1317365/pexels-photo-1317365.jpeg");
   const [selectedIcon, setSelectedIcon] = useState(1);
   const navigate = useNavigate();
@@ -78,6 +88,8 @@ function EventForm({ selectedFont, onFontSelect }: EventFormProps) {
   const [showPullGuest, setShowPullGuest] = useState(false);
   const _profile = useAuthStore((state) => state.profile);
   const [emojiModal, setEmojiModal] = useState(false);
+  const { resetPayment, payment } = usePaymentStore((state) => state);
+  const { resetPrivacy, privacy } = usePrivacyStore((state) => state);
 
 
   const [dateValue, setDateValue] = React.useState<DateRange | undefined>(undefined)
@@ -96,9 +108,10 @@ function EventForm({ selectedFont, onFontSelect }: EventFormProps) {
       imagenUrl: "",
       ubicacion: "",
       capacidadMaxima: 0,
-      cost: "",
+      precio: 0,
       iconRsvp: 1,
       descripcion: "",
+      password: ""
     },
     mode: "onChange"
   });
@@ -134,12 +147,24 @@ function EventForm({ selectedFont, onFontSelect }: EventFormProps) {
       data.fechaEnd = fechaEndUtc;
 
     }
-    console.log(data)
+    data.precio = payment.amount;
+    data.idTipoMoneda = parseInt(payment.currency);
+    data.jsonPrivacy = JSON.stringify(privacy);
+    data.mostrarMarcaTiempo = privacy.showTimestamps;
+    data.mostrarNombreInvitado = privacy.showGuestNames;
+    data.mostrarNumeroInvitado = privacy.showNumberGuests;
+    data.password = privacy.password!;
+
     var response = await eventoService.registrar(data);
     if (response.status === 200) {
+
+      toast.success('Successfully!')
+      resetPayment();
+      resetPrivacy();
       navigate('/events');
     } else {
-      alert('response error');
+
+      toast.error('response error!')
     }
   };
 
@@ -335,29 +360,18 @@ function EventForm({ selectedFont, onFontSelect }: EventFormProps) {
 
           {/* Cost */}
           <div className="bg-[#100229] rounded-lg p-4">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3" onClick={onSettingsClick}>
               <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center">
                 <DollarSign className="w-5 h-5 text-purple-400" />
               </div>
-              <div className="flex-1">
-                <FormField
-                  control={form.control}
-                  name="cost"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="+ Costo por persona"
-                          autoComplete="off"
-                          className="bg-transparent border-none focus-visible:ring-2 text-white/90 placeholder:text-white/50 h-auto p-1"
-                        />
-                      </FormControl>
-                      <FormMessage className="text-red-400 mt-2" />
-                    </FormItem>
-                  )}
-                />
-              </div>
+
+
+              {payment && payment.amount > 0 ? (
+                <span className="text-white/90 text-lg">{payment.amount} {payment.codigo} por persona</span>
+              ) : (
+                <span></span>
+              )}
+
             </div>
           </div>
 
@@ -444,7 +458,7 @@ function EventForm({ selectedFont, onFontSelect }: EventFormProps) {
             <Button
               type="submit"
               className="bg-[#000] hover:bg-[#151515] text-white px-12 py-6 text-lg font-medium rounded-lg flex items-center gap-2"
-              >
+            >
               Guardar
               <Save className="w-5 h-5" />
             </Button>
@@ -486,6 +500,12 @@ function EventForm({ selectedFont, onFontSelect }: EventFormProps) {
           onAcept={handleChangeEmoji}
         />
       )}
+
+
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+      />
 
     </div>
   );

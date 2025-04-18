@@ -7,18 +7,9 @@ interface Testimonial {
 }
 
 const testimonials: Testimonial[] = [
-  {
-    logo: "https://upload.wikimedia.org/wikipedia/commons/4/4a/WSJ_Logo.svg",
-    quote: "Evites are so last decade"
-  },
-  {
-    logo: "https://upload.wikimedia.org/wikipedia/commons/4/4a/WSJ_Logo.svg",
-    quote: "This is where my social calendar exists"
-  },
-  {
-    logo: "https://upload.wikimedia.org/wikipedia/commons/4/4a/WSJ_Logo.svg",
-    quote: "Partiful is a mainstay of my social life"
-  }
+
+
+
 ];
 
 export function TestimonialsCarousel() {
@@ -42,7 +33,7 @@ export function TestimonialsCarousel() {
   }, []);
 
   return (
-    <div className="w-full overflow-hidden bg-gradient-to-r from-[#7226ff] to-[#f042ff] py-20">
+    <div >
       <div 
         ref={scrollRef}
         className="flex gap-16 whitespace-nowrap overflow-x-hidden"

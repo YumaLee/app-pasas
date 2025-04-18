@@ -10,9 +10,7 @@ export function InvitationCustomization() {
           <h2 className="text-[48px] font-bold leading-[1.1] tracking-[-0.02em] mb-4">
             Fun, modern invites in 1-click
           </h2>
-          <p className="text-xl text-neutral-500">
-            100% free, no paywalls. Customize the perfect invite.
-          </p>
+        
         </div>
 
         <div className="flex flex-wrap gap-4 justify-center mb-12">

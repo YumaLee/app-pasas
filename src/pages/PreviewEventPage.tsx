@@ -26,6 +26,9 @@ import LoadingOverlay from "@/components/ui/loadingOverlay";
 import { HeaderHome } from "@/components/header/HeaderHome";
 import ImageViewer from "@/components/evento/View/ImageViewer";
 import NotFoundPage from "./NotFoundPage";
+import Drawer from "@/components/drawer/Drawer";
+import AccessOverlay from "@/components/access/AccessOverlay";
+import AttendanceForm from "@/components/access/AttendanceForm";
 
 
 const iconSets = [
@@ -43,6 +46,7 @@ const notify = () => toast('Here is your toast.');
 
 export function PreviewEventPage() {
     const [openInvite, setOpenInvite] = useState(false);
+    const [openAccess, setOpenAccess] = useState(false);
 
     const zonaHorariaUsuario = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -80,43 +84,43 @@ export function PreviewEventPage() {
             if (!codigo || hasFetched.current) return;
             hasFetched.current = true;
             setIsLoading(true);
-            const [eventoData, comentariosData] = await Promise.all([
-                eventoService.getByCode(codigo, _profile?.telefono!),
-                comentarioService.getByCode(codigo)
-            ]);
 
-            debugger
+            /*            const [eventoData, comentariosData] = await Promise.all([
+                           eventoService.getByCode(codigo),
+                           comentarioService.getByCode(codigo)
+                       ]);
+                       
+            */
+
+            var eventoData = await eventoService.getByCode(codigo);
 
             if (eventoData.status === 200) {
-
                 var data = eventoData.data;
                 setItemEvent(data);
                 setSelectedIcon(data.iconRsvp);
-                setDataItem({
-                    idusuario: _profile?.id,
-                    idEvento: data.id,
-                    avatar: _profile?.foto,
-                    usuario: _profile?.nombre + '' + _profile?.apellidoPaterno
-                })
-                setComentarios(comentariosData.data);
+
+                if (isAuth) {
+                    setDataItem({
+                        idusuario: _profile?.id,
+                        idEvento: data.id,
+                        avatar: _profile?.foto,
+                        usuario: _profile?.nombre + '' + _profile?.apellidoPaterno
+                    })
+
+                    var comentariosData = await comentarioService.getByCode(codigo);
+                    if (eventoData.status === 200)
+                        setComentarios(comentariosData.data);
+                }
+
                 setCountAsistente(data.countAsistencia);
                 setIsLoading(false);
 
-                toast.success('Successfully!', {
-                    icon: '👏',
-                })
+                toast.success('Successfully!')
             }
             else {
-
                 setError(true);
-                toast.error('not found data!', {
-                    icon: '👏',
-                })
-
+                toast.error('not found data!')
             }
-
-
-
         } catch (error) {
             console.error("Error al obtener los datos:", error);
         }
@@ -127,12 +131,9 @@ export function PreviewEventPage() {
     }
 
 
-
     useEffect(() => {
         fetchData();
-    }, [codigo]); // Se ejecuta cuando perfil cambia
-
-
+    }, [codigo]);
 
 
     const handleCopyLink = async () => {
@@ -144,8 +145,6 @@ export function PreviewEventPage() {
             console.error("Error al copiar:", error);
         }
     };
-
-
 
 
     const handleRsvpClick = (index: number) => {
@@ -223,8 +222,9 @@ export function PreviewEventPage() {
 
     const handlePayment = async () => {
         setIsLoading(true);
-        const RUTA = import.meta.env.STRIPE_PUBLISHABLE_KEY
-        const response = await eventoService.payment({ amount: 25, eventName: itemEvent.titulo,codigo:itemEvent.codigo })
+        const RUTA = import.meta.env.STRIPE_PUBLISHABLE_KEY;
+
+        const response = await eventoService.payment({ titulo: itemEvent.titulo, codigo: itemEvent.codigo })
         if (response.status === 200) {
             const { sessionId } = response.data;
             const stripe = await loadStripe(RUTA); // Tu clave pública de Stripe
@@ -380,6 +380,12 @@ export function PreviewEventPage() {
                     </div>
                 </div>
 
+                {!isAuth ? (
+                    <AttendanceForm
+                        onClose={() => setOpenAccess(false)}
+                        open={openAccess}
+                    />
+                ) : null}
 
                 <div className="grid md:grid-cols-[1fr,350px] gap-8">
                     {/* Left Column */}
@@ -500,130 +506,151 @@ export function PreviewEventPage() {
 
                         </div>
 
+                        <Drawer
+                            isOpen={openInvite}
+                            onClose={() => setOpenInvite(!openInvite)}
+                        />
+
                         {/* Description */}
                         <div className="text-white/70">
                             <p className="break-words">{itemEvent.descripcion}</p>
 
                         </div>
 
-                        {/* Open Invite Section */}
-                        <div className="flex items-center justify-between bg-white/10 rounded-lg p-4">
-                            <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-full bg-blue-400/20 flex items-center justify-center flex-shrink-0">
-                                    <span className="text-blue-400 text-xl">↗️</span>
-                                </div>
-                                <div>
-                                    <h3 className="text-white font-medium">Invitación abierta</h3>
-                                    <p className="text-white/70 text-sm">Cualquier persona que tenga el enlace puede confirmar su asistencia.</p>
-                                </div>
-                            </div>
-                            <Button
-                                variant="ghost"
-                                className="text-white hover:bg-white/10"
-                                onClick={() => { setOpenInvite(!openInvite), notify() }}
-                            >
-                                {openInvite ? "ON" : "OFF"}
-                            </Button>
-                        </div>
+                        <div className="relative">
 
-                        {/* Photo Album Section */}
-                        <div className="space-y-4">
-                            <div className="flex items-center justify-between">
-                                <h2 className="text-xl md:text-2xl font-bold text-white">Photo Album</h2>
+                            {/* Open Invite Section */}
+                            <div className="flex items-center justify-between bg-white/10 rounded-lg p-4">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-10 h-10 rounded-full bg-blue-400/20 flex items-center justify-center flex-shrink-0">
+                                        <span className="text-blue-400 text-xl">↗️</span>
+                                    </div>
+                                    <div>
+                                        <h3 className="text-white font-medium">Invitación abierta</h3>
+                                        <p className="text-white/70 text-sm">Cualquier persona que tenga el enlace puede confirmar su asistencia.</p>
+                                    </div>
+                                </div>
                                 <Button
                                     variant="ghost"
-                                    className="text-white/70 hover:text-white hover:bg-white/10 gap-2"
+                                    className="text-white hover:bg-white/10"
+                                    onClick={() => { setOpenInvite(!openInvite), notify() }}
                                 >
-                                    <LinkIcon className="h-4 w-4" />
-                                    <span className="hidden sm:inline">Copy link</span>
+                                    {openInvite ? "ON" : "OFF"}
                                 </Button>
-
-                                <label
-                                    className="aspect-square rounded-lg  text-white flex flex-col items-center justify-center gap-2 max-h-[200px]"
-                                >
-                                    <Camera className="h-8 w-8" />
-                                    <span className="text-sm"></span>
-                                    <input
-                                        ref={fileInputRef}
-                                        type="file"
-                                        className="hidden"
-                                        accept="image/*"
-                                        id="fileInput"
-                                        onChange={handleImageChange}
-                                    />
-                                </label>
                             </div>
 
 
-                            <div className="grid grid-cols-4 md:grid-cols-4 gap-3">
+                            {/* Photo Album Section */}
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <h2 className="text-xl md:text-2xl font-bold text-white">Photo Album</h2>
+                                    <Button
+                                        variant="ghost"
+                                        className="text-white/70 hover:text-white hover:bg-white/10 gap-2"
+                                    >
+                                        <LinkIcon className="h-4 w-4" />
+                                        <span className="hidden sm:inline">Copy link</span>
+                                    </Button>
 
-                                {/* Placeholder for future photos */}
-                                {selectedImage ?
-                                    <div className="aspect-square rounded-lg bg-white/5 overflow-hidden max-h-[200px]">
-                                        <img
-                                            src={selectedImage}
-                                            alt="Valentine's Day Template"
-                                            className="w-full h-full object-cover"
+                                    <label
+                                        className="aspect-square rounded-lg  text-white flex flex-col items-center justify-center gap-2 max-h-[200px]"
+                                    >
+                                        <Camera className="h-8 w-8" />
+                                        <span className="text-sm"></span>
+                                        <input
+                                            ref={fileInputRef}
+                                            type="file"
+                                            className="hidden"
+                                            accept="image/*"
+                                            id="fileInput"
+                                            onChange={handleImageChange}
                                         />
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="h-4 w-4 absolute top-3 right-3  text-white aspect-square"
-                                            onClick={handleClearImage}
-                                        >
-                                        </Button>
-                                    </div> : null
-                                }
+                                    </label>
+                                </div>
 
 
+                                <div className="grid grid-cols-4 md:grid-cols-4 gap-3">
 
-                                {comentarios.length > 0 ? (
-                                    comentarios
-                                        .filter((item: any) => item.imagenUrl)
-                                        .map((item: any, index) => (
-                                            <div
-                                                className="aspect-square rounded-lg overflow-hidden max-h-[200px]"
-                                                key={index}
+                                    {/* Placeholder for future photos */}
+                                    {selectedImage ?
+                                        <div className="aspect-square rounded-lg bg-white/5 overflow-hidden max-h-[200px]">
+                                            <img
+                                                src={selectedImage}
+                                                alt="Valentine's Day Template"
+                                                className="w-full h-full object-cover"
+                                            />
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-4 w-4 absolute top-3 right-3  text-white aspect-square"
+                                                onClick={handleClearImage}
                                             >
+                                            </Button>
+                                        </div> : null
+                                    }
 
-                                                <div className="w-full h-full object-cover">
-                                                    <ImageViewer
-                                                        imageUrl={item.imagenUrl}
-                                                        userName="Julia Lopes"
-                                                        userAvatar="https://pasasfile.blob.core.windows.net/pasas-contenedor/foto-evento/albun_evento_bmr6e-b074c4d97c694c1.jpg"
-                                                        timeAgo="44 minutes ago"
-                                                    />
+
+
+                                    {comentarios.length > 0 ? (
+                                        comentarios
+                                            .filter((item: any) => item.imagenUrl)
+                                            .map((item: any, index) => (
+                                                <div
+                                                    className="aspect-square rounded-lg overflow-hidden max-h-[200px]"
+                                                    key={index}
+                                                >
+
+                                                    <div className="w-full h-full object-cover">
+                                                        <ImageViewer
+                                                            imageUrl={item.imagenUrl}
+                                                            userName="Julia Lopes"
+                                                            userAvatar="https://pasasfile.blob.core.windows.net/pasas-contenedor/foto-evento/albun_evento_bmr6e-b074c4d97c694c1.jpg"
+                                                            timeAgo="44 minutes ago"
+                                                        />
+                                                    </div>
+
                                                 </div>
 
+
+                                            ))
+                                    ) : (
+                                        <>
+
+                                            <div className="aspect-square rounded-lg bg-white/5 overflow-hidden max-h-[200px]">
+                                                <p className="text-gray-500 text-center mt-8">No hay imágenes disponibles</p>
+
                                             </div>
-
-
-                                        ))
-                                ) : (
-                                    <>
-
-                                        <div className="aspect-square rounded-lg bg-white/5 overflow-hidden max-h-[200px]">
-                                            <p className="text-gray-500 text-center mt-8">No hay imágenes disponibles</p>
-
-                                        </div>
-                                        <div className="aspect-square rounded-lg bg-white/5 overflow-hidden max-h-[200px]">
-                                        </div>
-                                    </>
-                                )}
+                                            <div className="aspect-square rounded-lg bg-white/5 overflow-hidden max-h-[200px]">
+                                            </div>
+                                        </>
+                                    )}
 
 
 
+                                </div>
                             </div>
+
+                            {/* Activity Section */}
+                            {isAuth ? (
+                                <ComentarioActivity
+                                    dataItem={dataItem}
+                                    comentarios={comentarios}
+                                    setComentarios={setComentarios}
+                                    onBlastClick={() => console.log('first')}
+                                    onGoingClick={() => console.log('first')}
+                                />
+                            ) : null}
+
+                            {!isAuth ? (
+                                <AccessOverlay
+                                    onBlastClick={() => setOpenAccess(!openAccess)}
+                                />
+                            ) : null}
+
+
                         </div>
 
-                        {/* Activity Section */}
-                        <ComentarioActivity
-                            dataItem={dataItem}
-                            comentarios={comentarios}
-                            setComentarios={setComentarios}
-                            onBlastClick={() => console.log('first')}
-                            onGoingClick={() => console.log('first')}
-                        />
+
                     </div>
 
                     {/* Right Column */}

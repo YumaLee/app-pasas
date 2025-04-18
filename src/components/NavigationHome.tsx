@@ -6,10 +6,8 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 
 const menuItems = [
-  { name: "Birthday", slug: "birthday" },
-  { name: "Engagement", slug: "engagement" },
-  { name: "Dinner Party", slug: "dinner-party" },
-  { name: "Blog", slug: "blog" }
+
+ 
 ];
 
 export function NavigationHome() {

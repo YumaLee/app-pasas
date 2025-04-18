@@ -162,9 +162,7 @@ export function LoginContent() {
                 <p className="text-white/60 flex items-center gap-2 justify-center">
                   <span>😴</span> ¿Cansada de ser desconectada?
                 </p>
-                <Button variant="link" className="text-purple-300 hover:text-purple-200">
-                  Utilice la aplicación →
-                </Button>
+          
               </div>
             </form>)
         }

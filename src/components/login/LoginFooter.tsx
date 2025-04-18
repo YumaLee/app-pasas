@@ -10,8 +10,8 @@ export function LoginFooter() {
         <Link to="/privacy" className="hover:text-white transition-colors">Privacidad</Link>
         <span>|</span>
         <Link to="/careers" className="hover:text-white transition-colors">Carreras</Link>
-        <span>|</span>
-        <Link to="/faq" className="hover:text-white transition-colors">FAQ</Link>
+      
+      
       </div>
     </footer>
   );

@@ -27,6 +27,9 @@ import eventoService from "@/shared/services/EventoService";
 import { useAuthStore } from "@/store/authStore";
 import { HeaderHome } from "@/components/header/HeaderHome";
 import DialogDefault from "@/components/ui/dialog-confirm";
+import { usePaymentStore } from "@/store/settingPayment";
+import { usePrivacyStore } from "@/store/privaceStore";
+
 
 interface Evento {
   eventoID: number;
@@ -134,6 +137,8 @@ export function EventoPage() {
   const setProfileName = useAuthStore((state) => state.setProfileName);
 
   const _profile = useAuthStore((state) => state.profile);
+  const { resetPayment } = usePaymentStore((state) => state);
+  const { resetPrivacy } = usePrivacyStore((state) => state);
   const hasFetched = useRef(false);
 
   const navigate = useNavigate();
@@ -142,6 +147,8 @@ export function EventoPage() {
 
   useEffect(() => {
     fetchData();
+    resetPayment();
+    resetPrivacy();
   }, [_profile]); // Se ejecuta cuando perfil cambia
 
 
@@ -430,7 +437,7 @@ export function EventoPage() {
               </div>
               <div className="max-w-sm mx-auto">
                 <h3 className="text-xl text-white font-medium mb-2">
-                Aún no hay mutuas
+                  Aún no hay mutuas
                 </h3>
                 <p className="text-white/70">
                   ¡Vuelve a consultar esta página cuando vayas a tu primer evento!
@@ -446,7 +453,7 @@ export function EventoPage() {
               <span className="hidden md:inline">|</span>
               <Link to="/careers" className="hover:text-white">Careers</Link>
               <span className="hidden md:inline">|</span>
-              <Link to="/faq" className="hover:text-white">FAQ</Link>
+          
             </div>
           </div>
         </div>

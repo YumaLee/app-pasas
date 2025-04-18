@@ -13,33 +13,9 @@ export function ContentHome() {
           The easiest way to get your guests on the same page
         </p>
         
-        <div className="flex flex-col sm:flex-row gap-4 mb-12">
-        <Button className="bg-gradient-to-r from-[#7226ff] to-[#f042ff] text-white hover:opacity-90 h-12 px-6 font-medium">
-            Create event
-          </Button>
-          <Button variant="outline" className="h-12 px-6 font-medium">
-            Get the app
-          </Button>
-        </div>
+      
 
-        <div className="flex items-center gap-6">
-          <div className="flex flex-col items-center">
-            <img 
-              src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" 
-              alt="Get it on Google Play" 
-              className="h-14"
-            />
-            <span className="text-xs text-neutral-600 mt-1">Best App of 2024</span>
-          </div>
-          <div className="flex flex-col items-center">
-            <img 
-              src="https://developer.apple.com/app-store/marketing/guidelines/images/badge-example-preferred.png" 
-              alt="Download on the App Store" 
-              className="h-11"
-            />
-            <span className="text-xs text-neutral-600 mt-1">2024 Finalist</span>
-          </div>
-        </div>
+ 
       </div>
 
       <div className="relative">

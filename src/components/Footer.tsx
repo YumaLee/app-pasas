@@ -1,4 +1,4 @@
-import { PartyPopper, Instagram, Twitter, Music } from "lucide-react";
+import { PartyPopper, Instagram,  } from "lucide-react";
 
 const footerLinks = {
   product: [
@@ -20,8 +20,8 @@ const footerLinks = {
   ],
   social: [
     { name: "Instagram", href: "#", icon: Instagram },
-    { name: "Twitter", href: "#", icon: Twitter },
-    { name: "TikTok", href: "#", icon: Music },
+  
+
   ],
 };
 

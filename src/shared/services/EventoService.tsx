@@ -79,7 +79,7 @@ class EventoService {
         }
     }
 
-    async getByCode(code: string, telefono: string): Promise<AxiosResponse | any> {
+    async getByCode(code: string): Promise<AxiosResponse | any> {
         try {
             const response: AxiosResponse = await axios.get(`${RUTA}/evento/get?codigo=${code}`);
             return response;

@@ -33,54 +33,7 @@ const blogPosts = [
 export function BlogSection() {
   return (
     <div className="w-full bg-gradient-to-b from-white to-purple-50/50 py-16 md:py-32">
-      <div className="max-w-[1200px] mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-[32px] md:text-[48px] font-bold leading-[1.1] tracking-[-0.02em] mb-4">
-            psst...fresh off the press 😏
-          </h2>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          {blogPosts.map((post, index) => (
-            <div
-              key={index}
-              className="group relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow"
-            >
-              <div className="aspect-[4/3] overflow-hidden">
-                <img
-                  src={post.image}
-                  alt={post.title}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold mb-3 line-clamp-2">
-                  {post.title}
-                </h3>
-                <p className="text-neutral-600 text-sm mb-4 line-clamp-3">
-                  {post.description}
-                </p>
-                <div className="flex items-center gap-3">
-                  <img
-                    src={post.author.avatar}
-                    alt={post.author.name}
-                    className="w-8 h-8 rounded-full object-cover"
-                  />
-                  <span className="text-sm font-medium">
-                    {post.author.name}
-                  </span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="text-center mt-12">
-          <Button variant="outline" size="lg" className="font-medium">
-            Read more on our blog
-          </Button>
-        </div>
-      </div>
+   
     </div>
   );
 }
