@@ -6,7 +6,6 @@ import { MoreHorizontal, Crown, MapPin, Music, Users, Link as LinkIcon, Camera, 
 import { formatInTimeZone } from "date-fns-tz";
 import { AddToCalendarButton } from 'add-to-calendar-button-react';
 import toast, { Toaster } from 'react-hot-toast';
-import { loadStripe } from "@stripe/stripe-js";
 
 import {
     DropdownMenu,
@@ -22,6 +21,8 @@ import asistenciaService from "@/shared/services/AsistenciaService";
 import comentarioService from "@/shared/services/ComentarioService";
 import { ComentarioActivity } from "@/components/evento/Comentario";
 import { useAuthStore } from "@/store/authStore";
+import { useEventoPayStore } from "@/store/eventoPaymentStore";
+
 import LoadingOverlay from "@/components/ui/loadingOverlay";
 import { HeaderHome } from "@/components/header/HeaderHome";
 import ImageViewer from "@/components/evento/View/ImageViewer";
@@ -29,6 +30,7 @@ import NotFoundPage from "./NotFoundPage";
 import Drawer from "@/components/drawer/Drawer";
 import AccessOverlay from "@/components/access/AccessOverlay";
 import AttendanceForm from "@/components/access/AttendanceForm";
+import EventPayment from "@/components/payment/Payment";
 
 
 const iconSets = [
@@ -47,6 +49,7 @@ const notify = () => toast('Here is your toast.');
 export function PreviewEventPage() {
     const [openInvite, setOpenInvite] = useState(false);
     const [openAccess, setOpenAccess] = useState(false);
+    const [openPay, setOpenPay] = useState(false);
 
     const zonaHorariaUsuario = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -63,6 +66,7 @@ export function PreviewEventPage() {
     const _profile = useAuthStore((state) => state.profile);
     const setCountAsistente = useAuthStore((state) => state.setCountAsistente);
     const countAsistente = useAuthStore((state) => state.countAsistencia);
+    const { paymentStore } = useEventoPayStore((state) => state);
 
     const [dataItem, setDataItem] = useState<any>({});
     const [comentarios, setComentarios] = useState([]);
@@ -222,20 +226,8 @@ export function PreviewEventPage() {
 
     const handlePayment = async () => {
         setIsLoading(true);
-        const RUTA = import.meta.env.STRIPE_PUBLISHABLE_KEY;
-
-        const response = await eventoService.payment({ titulo: itemEvent.titulo, codigo: itemEvent.codigo })
-        if (response.status === 200) {
-            const { sessionId } = response.data;
-            const stripe = await loadStripe(RUTA); // Tu clave pública de Stripe
-            setIsLoading(false);
-
-            await stripe?.redirectToCheckout({ sessionId });
-        } else {
-            alert('response error payment');
-        }
+        setOpenPay(true)
         setIsLoading(false);
-
     };
 
     if (error || !itemEvent) return <NotFoundPage />;
@@ -382,8 +374,19 @@ export function PreviewEventPage() {
 
                 {!isAuth ? (
                     <AttendanceForm
+                        selectedIcon={iconSets.find(set => set.id === selectedIcon)?.icons}
                         onClose={() => setOpenAccess(false)}
+                        dataItem={itemEvent}
                         open={openAccess}
+                    />
+                ) : null}
+
+
+                {isAuth ? (
+                    <EventPayment
+                        onClose={() => setOpenPay(false)}
+                        dataItem={itemEvent}
+                        open={openPay}
                     />
                 ) : null}
 
@@ -450,17 +453,20 @@ export function PreviewEventPage() {
                                             </DropdownMenuContent>
                                         </DropdownMenu>
 
-                                        <AddToCalendarButton
-                                            name={itemEvent.titulo}
-                                            options={['Google', 'Outlook.com', 'MicrosoftTeams']}
-                                            location={itemEvent.ubicacion}
-                                            startDate={itemEvent.fechaStart}
-                                            endDate={itemEvent.fechaEnd}
-                                            description={itemEvent.descripcion}
-                                            timeZone={zonaHorariaUsuario}
-                                            label="Calendario"
-                                            hideBackground
-                                        ></AddToCalendarButton>
+                                        {isAuth ? (
+                                            <AddToCalendarButton
+                                                name={itemEvent.titulo}
+                                                options={['Google', 'Outlook.com', 'MicrosoftTeams']}
+                                                location={itemEvent.ubicacion}
+                                                startDate={itemEvent.fechaStart}
+                                                endDate={itemEvent.fechaEnd}
+                                                description={itemEvent.descripcion}
+                                                timeZone={zonaHorariaUsuario}
+                                                label="Calendario"
+                                                hideBackground
+                                            ></AddToCalendarButton>
+                                        ) : null}
+
                                     </div>
 
 
@@ -490,7 +496,11 @@ export function PreviewEventPage() {
                                 <MapPin className="h-5 w-5 flex-shrink-0" />
                                 {itemEvent.ubicacion == null || itemEvent.ubicacion == "" ?
                                     <span className="break-words">No hay ubicación establecida</span> :
-                                    <span className="break-words">{itemEvent.ubicacion}</span>
+
+                                    <span className="break-words">{isAuth ?
+                                        itemEvent.ubicacion :
+                                        itemEvent.ubicacion.split(' ').slice(0, 2).join(' ') + " **********"
+                                    }</span>
                                 }
 
                             </div>
@@ -687,7 +697,7 @@ export function PreviewEventPage() {
                                     <h3 className="text-white font-medium">Guest List</h3>
                                     <Button
                                         onClick={handlePayment}
-                                        disabled={isLoading}
+                                        disabled={isAuth ? !paymentStore.isPaid : true}
                                         variant="primary" className="text-white/70 hover:text-white">
                                         Pagar
                                     </Button>

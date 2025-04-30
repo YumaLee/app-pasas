@@ -147,3 +147,15 @@
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+
+/* en tu globals.css o tailwind.css */
+.pac-container {
+  @apply bg-white rounded-lg shadow-lg border border-gray-300;
+}
+
+.pac-item {
+  @apply px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer;
+}
+
+

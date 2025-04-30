@@ -63,7 +63,7 @@ export function SmsSend({ open, loading, onOpenChange, onSendCode }: SmsSendProp
               disabled={loading}
             >
               {
-                loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Cargando...  </> : 'ENVIAR SMS'
+                loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Cargando...  </> : ' 💬 ENVIAR SMS'
               }
             </Button>
           </div>

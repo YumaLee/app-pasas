@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { ChevronDown, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -48,10 +48,15 @@ interface EventFormProps {
   setShowRsvpModal: (show: boolean) => void;
   selectedRsvp: RsvpType;
   setSelectedRsvp: (type: RsvpType) => void;
-  onSave : (data:any) => void;
+  onSave: (data: any) => void;
 }
 
-export function ConfirmarModal({ selectedIcon, showRsvpModal, setShowRsvpModal, selectedRsvp, setSelectedRsvp,onSave }: EventFormProps) {
+export function ConfirmarModal({
+  selectedIcon,
+  showRsvpModal,
+  setShowRsvpModal,
+  selectedRsvp,
+  setSelectedRsvp, onSave }: EventFormProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -77,6 +82,8 @@ export function ConfirmarModal({ selectedIcon, showRsvpModal, setShowRsvpModal, 
 
   return (
     <Dialog open={showRsvpModal} onOpenChange={setShowRsvpModal}>
+      <DialogTitle></DialogTitle>
+
       <DialogContent className="max-w-md bg-[#1A0505] border-neutral-800 p-0">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="p-6">

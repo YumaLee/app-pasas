@@ -43,7 +43,7 @@ const formSchema = z.object({
   host: z.string().optional(),
   imagenUrl: z.string().optional(),
   ubicacion: z.string().optional(),
-  capacidadMaxima: z.preprocess((value) => { if (value === "") return 0; return Number(value); }, z.union([z.number().int().positive(), z.nan()]).optional()),
+  capacidadMaxima: z.preprocess((value) => { if (value === "") return 0; return Number(value); }, z.union([z.number().int().nonnegative(), z.nan()]).optional()),
   precio: z.coerce.number().optional(),
   descripcion: z.string().optional(),
   iconRsvp: z.number().optional(),
@@ -91,9 +91,7 @@ function EventForm({ selectedFont, onFontSelect, onSettingsClick }: EventFormPro
   const { resetPayment, payment } = usePaymentStore((state) => state);
   const { resetPrivacy, privacy } = usePrivacyStore((state) => state);
 
-
   const [dateValue, setDateValue] = React.useState<DateRange | undefined>(undefined)
-
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -118,7 +116,6 @@ function EventForm({ selectedFont, onFontSelect, onSettingsClick }: EventFormPro
 
   const handleImageSelect = (imageUrl: string) => {
     form.setValue("imagenUrl", imageUrl);
-
     setSelectedImage(imageUrl);
     setShowImagePicker(false);
   };
@@ -154,11 +151,12 @@ function EventForm({ selectedFont, onFontSelect, onSettingsClick }: EventFormPro
     data.mostrarNombreInvitado = privacy.showGuestNames;
     data.mostrarNumeroInvitado = privacy.showNumberGuests;
     data.password = privacy.password!;
+    data.imagenUrl = data.imagenUrl == "" ? selectedImage : data.imagenUrl;
 
     var response = await eventoService.registrar(data);
     if (response.status === 200) {
 
-      toast.success('Successfully!')
+      toast.success('El evento ha sido registrado con éxito.!')
       resetPayment();
       resetPrivacy();
       navigate('/events');
@@ -189,7 +187,7 @@ function EventForm({ selectedFont, onFontSelect, onSettingsClick }: EventFormPro
                   <FormControl>
                     <Input
                       {...field}
-                      placeholder="Untitled Event"
+                      placeholder="Nombre del Evento"
                       className={`text-4xl font-bold bg-transparent border-none focus-visible:ring-2 text-white/90 placeholder:text-white/50 h-auto p-1 ${getFontStyle(selectedFont)}`}
                       autoComplete="off"
                     />
@@ -198,6 +196,7 @@ function EventForm({ selectedFont, onFontSelect, onSettingsClick }: EventFormPro
                 </FormItem>
               )}
             />
+
             <div className="mt-4">
               <div className="flex items-center gap-2 text-sm text-neutral-400 mb-2">
                 <span>Aa</span>
@@ -223,14 +222,18 @@ function EventForm({ selectedFont, onFontSelect, onSettingsClick }: EventFormPro
                   key={5}
                   type="button"
                   variant={"secondary"}
-                  className="rounded-full bg-[#7226ff] text-white hover:bg-purple-700"
+                  className="rounded-full bg-[#c526ff] text-white hover:bg-blue-500"
                   onClick={() => setEmojiModal(!emojiModal)}
                 >
                   Emoji 😊
                 </Button>
+
               </div>
+
             </div>
           </div>
+
+
 
           {/* Date Range Input */}
           <div className="bg-[#100229] rounded-lg p-4">
@@ -281,6 +284,7 @@ function EventForm({ selectedFont, onFontSelect, onSettingsClick }: EventFormPro
                             autoComplete="off"
                             placeholder="(optional) host nickname"
                             className="bg-transparent border-none focus-visible:ring-2 text-white/90 placeholder:text-white/50 h-auto p-1"
+                            readOnly
                           />
                         </FormControl>
                         <FormMessage className="text-red-400 mt-2" />
@@ -288,7 +292,7 @@ function EventForm({ selectedFont, onFontSelect, onSettingsClick }: EventFormPro
                     )}
                   />
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2" style={{ display: 'none' }}>
                   <Button
                     type="button"
                     variant="link"
@@ -305,9 +309,12 @@ function EventForm({ selectedFont, onFontSelect, onSettingsClick }: EventFormPro
           <div className="bg-[#100229] rounded-lg p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center">
-                <MapPin className="w-5 h-5 text-purple-400" />
+                <QuickActionPopover type="link">
+                  <MapPin className="w-5 h-5 text-purple-400" />
+                </QuickActionPopover>
               </div>
               <div className="flex-1">
+
                 <FormField
                   control={form.control}
                   name="ubicacion"
@@ -320,6 +327,7 @@ function EventForm({ selectedFont, onFontSelect, onSettingsClick }: EventFormPro
                     </FormItem>
                   )}
                 />
+                <p className="text-sm text-white/50 mt-1">-</p>
               </div>
             </div>
           </div>
@@ -345,6 +353,7 @@ function EventForm({ selectedFont, onFontSelect, onSettingsClick }: EventFormPro
                             placeholder="1"
                             autoComplete="off"
                             className="w-20 bg-transparent border-none focus-visible:ring-2 text-white/90 placeholder:text-white/50 h-auto p-1 text-lg"
+                            min={0}
                           />
                         </FormControl>
                         <FormMessage className="text-red-400 mt-2" />
@@ -353,7 +362,7 @@ function EventForm({ selectedFont, onFontSelect, onSettingsClick }: EventFormPro
                   />
                   <span className="text-white/90 text-lg">spots</span>
                 </div>
-                <p className="text-sm text-white/50 mt-1">Déjelo vacío para espacios ilimitados</p>
+                <p className="text-sm text-white/50 mt-1">Déjelo 0 para espacios ilimitados</p>
               </div>
             </div>
           </div>
@@ -435,7 +444,7 @@ function EventForm({ selectedFont, onFontSelect, onSettingsClick }: EventFormPro
           </div>
 
           {/* Host Actions */}
-          <div>
+          <div hidden>
             <h3 className="text-sm text-white/70 mb-3">Quick actions for hosts</h3>
             <div className="flex flex-wrap gap-2">
               <Button type="button" variant="outline" className="bg-[#000] border-none text-white/70 hover:bg-[#2A1F1F] hover:text-white">

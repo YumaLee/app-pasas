@@ -38,9 +38,11 @@ interface SmsVerificationProps {
   timer: number;
   loading: boolean;
   onResendCode: (data: any) => void;
+  textColorClass?: string; // clase opcional
+
 }
 
-export function SmsVerification({ phone, loading, timer, onResendCode }: SmsVerificationProps) {
+export function SmsVerification({ phone, loading, timer, onResendCode, textColorClass }: SmsVerificationProps) {
   const [showAlert, setShowAlert] = useState(false);
 
   const form = useForm<FormValues>({
@@ -67,7 +69,7 @@ export function SmsVerification({ phone, loading, timer, onResendCode }: SmsVeri
         <form onSubmit={form.handleSubmit(handleAgree)} className="space-y-6">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <span className="text-white/70">Enviamos un código vía SMS al +{phone}</span>
+              <span className={` ${textColorClass}`}>Enviamos un código vía SMS al +{phone}</span>
               <span className="text-purple-400">✓</span>
             </div>
             <FormField
@@ -81,7 +83,7 @@ export function SmsVerification({ phone, loading, timer, onResendCode }: SmsVeri
                       type="text"
                       placeholder="Código de verificación"
                       maxLength={6}
-                      className="text-white placeholder:text-white"
+                      className={`${textColorClass} placeholder:text-white`}
                       autoComplete="off"
                     />
                   </FormControl>
@@ -92,7 +94,7 @@ export function SmsVerification({ phone, loading, timer, onResendCode }: SmsVeri
             <div className="mt-2 flex items-center justify-between">
               <button
                 type="button"
-                className="text-sm text-white/50 hover:text-white"
+                className={`text-sm  ${textColorClass}`}
                 onClick={handleResend}
                 disabled={timer > 0}
               >
@@ -102,13 +104,13 @@ export function SmsVerification({ phone, loading, timer, onResendCode }: SmsVeri
           </div>
 
           <div className="space-y-4">
-            <p className="text-sm text-white/50">
+            <p className={`text-sm ${textColorClass}`}>
               Al hacer clic en ACEPTO, aceptas nuestros{" "}
-              <Button variant="link" className="text-white/70 hover:text-white p-0 h-auto text-sm">
+              <Button variant="link" className={`${textColorClass} hover:text-white p-0 h-auto text-sm`}>
                 Terminos
               </Button>{" "}
               Y{" "}
-              <Button variant="link" className="text-white/70 hover:text-white p-0 h-auto text-sm">
+              <Button variant="link" className={`${textColorClass} hover:text-white p-0 h-auto text-sm`}>
                 política de privacidad
               </Button>{" "}
               y acepta recibir mensajes de texto de nosotros y de los anfitriones. Se aplican tarifas de mensajes y datos.

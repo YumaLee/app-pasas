@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { EventForm } from "@/components/EventForm";
 import { EventSettings } from "@/components/EventSettings";
-import { BrowseTemplatesBanner } from "@/components/BrowseTemplatesBanner";
 import { ActionButtons } from "@/components/ActionButtons";
 import { Link, useNavigate } from "react-router-dom";
 import LoadingOverlay from "@/components/ui/loadingOverlay";
@@ -11,7 +10,6 @@ import Drawer from "@/components/drawer/Drawer";
 
 export function TemplateNewPage() {
   const [selectedFont, setSelectedFont] = useState("Classic");
-  const [showBanner, setShowBanner] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
 
@@ -45,13 +43,6 @@ export function TemplateNewPage() {
         </div>
 
       </div>
-
-      {/* Browse Templates Banner */}
-      <BrowseTemplatesBanner
-        showBanner={showBanner}
-        onCloseBanner={() => setShowBanner(false)}
-        isHeaderVisible={false}
-      />
 
       {/* Right Side Fixed Buttons - Desktop Only */}
       <div className="fixed right-0 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col">

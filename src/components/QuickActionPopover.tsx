@@ -16,15 +16,15 @@ export function QuickActionPopover({ type, children }: QuickActionPopoverProps) 
     const getTitle = () => {
         switch (type) {
             case 'link':
-                return 'Add Link';
+                return 'Link';
             case 'playlist':
-                return 'Add Playlist';
+                return 'Playlist';
             case 'registry':
-                return 'Add Registry';
+                return 'Registro';
             case 'dress-code':
-                return 'Add Dress Code';
+                return 'Añadir código de vestimenta';
             case 'more':
-                return 'More Options';
+                return 'Mas Opciones';
             default:
                 return '';
         }
@@ -51,14 +51,14 @@ export function QuickActionPopover({ type, children }: QuickActionPopoverProps) 
                             </div>
                             <div className="flex justify-end">
                                 <Button className="bg-purple-600 hover:bg-purple-700 text-white">
-                                    ADD LINK
+                                    Agregar
                                 </Button>
                             </div>
                         </div>
                     )}
                     {type === 'playlist' && (
                         <div className="space-y-4">
-                            <p className="text-white/70">Connect your favorite music streaming service</p>
+                            <p className="text-white/70">Conecta tu servicio de streaming de música favorito</p>
                             <div className="space-y-2">
                                 <Button variant="outline" className="w-full justify-start bg-white/10 border-white/10 text-white hover:bg-white/20">
                                     🎵 Spotify
@@ -71,14 +71,14 @@ export function QuickActionPopover({ type, children }: QuickActionPopoverProps) 
                     )}
                     {type === 'registry' && (
                         <div className="space-y-4">
-                            <p className="text-white/70">Add your registry links</p>
+                            <p className="text-white/70">Agregue sus enlaces de registro</p>
                             <Input
                                 placeholder="Registry URL"
                                 className="bg-white/10 border-white/10 text-white placeholder:text-white/50"
                             />
                             <div className="flex justify-end">
                                 <Button className="bg-purple-600 hover:bg-purple-700 text-white">
-                                    ADD REGISTRY
+                                    Agregar
                                 </Button>
                             </div>
                         </div>
@@ -91,7 +91,7 @@ export function QuickActionPopover({ type, children }: QuickActionPopoverProps) 
                             />
                             <div className="flex justify-end">
                                 <Button className="bg-purple-600 hover:bg-purple-700 text-white">
-                                    SAVE
+                                    Agregar
                                 </Button>
                             </div>
                         </div>

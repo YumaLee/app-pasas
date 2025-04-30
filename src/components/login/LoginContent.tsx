@@ -118,6 +118,8 @@ export function LoginContent() {
             timer={12}
             phone={form.watch('telefono')}
             onResendCode={handleResendCode}
+            textColorClass="text-white/50"
+
           />
           :
           isFormVisible ?
