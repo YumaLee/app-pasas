@@ -49,7 +49,7 @@ export function HeaderHome({ isCreate, checkedMotion, onReduceMotion, onEdit }: 
                                         className="bg-[#8B3DFF] hover:bg-[#9B4DFF] text-white gap-2 px-3 md:px-4"
                                         onClick={() => navigate('/templates/new')}                                    >
                                         <Plus className="w-4 h-4" />
-                                        <span className="hidden md:inline">CREATE</span>
+                                        <span className="hidden md:inline">Crear</span>
                                     </Button>
 
                                     <Button
@@ -66,18 +66,12 @@ export function HeaderHome({ isCreate, checkedMotion, onReduceMotion, onEdit }: 
 
                                 >
                                     <Plus className="w-4 h-4" />
-                                    <span className="hidden md:inline">Home</span>
+                                    <span className="hidden md:inline">Principal</span>
                                 </Button>
                         }
 
 
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-white/70 hover:text-white hover:bg-white/10 hidden md:flex"
-                        >
-                            <HelpCircle className="w-5 h-5" />
-                        </Button>
+            
                         <Button
                             variant="ghost"
                             size="icon"
@@ -113,9 +107,9 @@ export function HeaderHome({ isCreate, checkedMotion, onReduceMotion, onEdit }: 
                                 </div>
                                 <DropdownMenuSeparator className="bg-neutral-800" />
                                 <DropdownMenuItem className="focus:bg-white/10 focus:text-white text-white/70">
-                                    Settings
+                                    Configuración
                                 </DropdownMenuItem>
-                                <div className="px-2 py-2">
+                                <div className="px-2 py-2" hidden>
                                     <div className="flex items-center justify-between">
                                         <span className="text-sm text-white/70">Reduce Motion</span>
                                         <Switch
@@ -137,7 +131,7 @@ export function HeaderHome({ isCreate, checkedMotion, onReduceMotion, onEdit }: 
                                                 className="text-white/70 hover:text-white hover:bg-white/10">
                                                 <LogOut className="w-5 h-5" />
                                             </Button>
-                                            <span className="text-sm text-white/70">Logout</span>
+                                            <span className="text-sm text-white/70">Salir</span>
                                         </div>
                                     </div>
                                 </DropdownMenuItem>

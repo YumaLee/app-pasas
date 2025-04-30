@@ -199,7 +199,7 @@ export function ViewUser({ loading = false, onSave, onCancel }: ViewUserProps) {
                                         SAVING...
                                     </>
                                 ) : (
-                                    'SAVE'
+                                    'Guardar'
                                 )}
                             </Button>
                         </div>
@@ -303,7 +303,7 @@ export function ViewUser({ loading = false, onSave, onCancel }: ViewUserProps) {
                                 <div className="bg-white/5 rounded-lg p-4">
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <p className="text-sm text-white/50 mb-1">Phone number · Only visible to you</p>
+                                            <p className="text-sm text-white/50 mb-1">Número de teléfono · Solo visible para ti</p>
                                             <p className="text-white/90">+ {_profile?.telefono}</p>
                                         </div>
                                         <button type="button" className="text-white/50 hover:text-white">
@@ -356,7 +356,7 @@ export function ViewUser({ loading = false, onSave, onCancel }: ViewUserProps) {
                                 </div>
 
                                 {/* Birthday Celebration Card */}
-                                <div className="bg-purple-600 rounded-lg p-6">
+                                <div className="bg-purple-600 rounded-lg p-6" hidden>
                                     <div className="flex items-center justify-between">
                                         <div>
                                             <h3 className="text-xl font-semibold mb-2 flex items-center gap-2">
@@ -376,7 +376,7 @@ export function ViewUser({ loading = false, onSave, onCancel }: ViewUserProps) {
                                 </div>
 
                                 {/* Delete Account */}
-                                <div className="pt-6 mb-20 md:mb-4">
+                                <div className="pt-6 mb-20 md:mb-4" hidden>
                                     <button
                                         type="button"
                                         className="text-red-500 hover:text-red-400 text-sm"

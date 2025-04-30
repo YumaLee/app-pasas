@@ -7,6 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import LoadingOverlay from "@/components/ui/loadingOverlay";
 import { HeaderHome } from "@/components/header/HeaderHome";
 import Drawer from "@/components/drawer/Drawer";
+import FloatingPetals from "@/components/animations/FloatingPetals";
 
 export function TemplateNewPage() {
   const [selectedFont, setSelectedFont] = useState("Classic");
@@ -26,6 +27,8 @@ export function TemplateNewPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#310f7a] to-[#821c8d] relative overflow-hidden">
       {/* Fixed Header */}
+      <FloatingPetals />
+
       <div
         className="top-0 left-0 right-0 z-50 bg-[#000]/80 backdrop-blur-sm border-b border-white/10 transition-transform duration-300"
       >

@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
+import { ActionPopover } from "./animations/ActionPopover";
 
 interface ActionButtonsProps {
   onSettingsClick: () => void;
   onPreviewClick: () => void;
 }
 
-export function ActionButtons({ onSettingsClick,onPreviewClick }: ActionButtonsProps) {
+export function ActionButtons({ onSettingsClick, onPreviewClick }: ActionButtonsProps) {
   return (
     <>
       <div className="relative flex flex-col items-center">
@@ -17,23 +18,23 @@ export function ActionButtons({ onSettingsClick,onPreviewClick }: ActionButtonsP
           <span className="text-xl">🎨</span>
         </Button>
         <span className="text-[11px] text-white/70 font-medium mt-2">
-          THEME
+          Temas
         </span>
       </div>
-      
+
       <div className="relative flex flex-col items-center">
-        <Button
-          size="icon"
-          variant="ghost"
-          className="w-14 h-14 rounded-full bg-[#0b0020] hover:bg-[#1e0056] text-white relative"
-        >
-          <span className="text-xl">💝</span>
-        </Button>
-        <span className="text-[11px] text-white/70 font-medium mt-2">
-          EFFECT
-        </span>
+        <ActionPopover type="aminacion">
+          <Button
+            size="icon"
+            variant="ghost"
+            className="w-14 h-14 rounded-full bg-[#0b0020] hover:bg-[#1e0056] text-white relative"
+          >
+            <span className="text-xl">💝</span>
+          </Button>
+
+        </ActionPopover>
       </div>
-      
+
       <div className="relative flex flex-col items-center">
         <Button
           size="icon"
@@ -47,7 +48,7 @@ export function ActionButtons({ onSettingsClick,onPreviewClick }: ActionButtonsP
           SETTINGS
         </span>
       </div>
-      
+
       <div className="relative flex flex-col items-center">
         <Button
           size="icon"

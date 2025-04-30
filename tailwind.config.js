@@ -73,10 +73,16 @@ export default {
             height: '0',
           },
         },
+        'petal-float': {
+          '0%': { transform: 'translateY(-10%) rotate(0deg)', opacity: '1' },
+          '100%': { transform: 'translateY(110vh) rotate(360deg)', opacity: '0' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        'petal-float': 'petal-float 12s linear infinite',
+
       },
     },
   },
