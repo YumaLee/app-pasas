@@ -145,7 +145,9 @@ const TimeInput = React.forwardRef<HTMLDivElement, TimeInputProps>(
                 className="group/time-input inline-flex w-full gap-x-2"
             >
                 {state.segments.map((segment, i) => (
-                    <TimeSegment key={i} segment={segment} state={state} />
+
+                    (segment.type == "dayPeriod" || segment.type == "literal") ? null :
+                        <TimeSegment key={i} segment={segment} state={state} />
                 ))}
             </div>
         )
@@ -192,20 +194,17 @@ interface TriggerProps
     placeholder?: string
 }
 
-const Trigger = React.forwardRef<HTMLButtonElement, TriggerProps>(
-    (
-        { className, children, placeholder, hasError, ...props }: TriggerProps,
-        forwardedRef,
-    ) => {
+const Trigger = React.forwardRef<HTMLSpanElement, TriggerProps>(
+    ({ className, children, placeholder, hasError, ...props }, forwardedRef) => {
         return (
             <PopoverPrimitives.Trigger asChild>
-                <button
+                <span
                     ref={forwardedRef}
-                    className={cx(triggerStyles({ hasError }), className)}
+                    className={`cursor-pointer ${className}`}
                     {...props}
+
                 >
-                    <RiCalendar2Fill className="size-5 shrink-0 text-gray-400 dark:text-gray-600" />
-                    <span className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-left text-gray-900 dark:text-gray-50">
+                    <span>
                         {children ? (
                             children
                         ) : placeholder ? (
@@ -214,11 +213,12 @@ const Trigger = React.forwardRef<HTMLButtonElement, TriggerProps>(
                             </span>
                         ) : null}
                     </span>
-                </button>
+                </span>
             </PopoverPrimitives.Trigger>
-        )
+        );
     },
-)
+);
+
 
 Trigger.displayName = "DatePicker.Trigger"
 
@@ -416,7 +416,7 @@ const formatDate = (
 
     if (includeTime) {
         dateString = usesAmPm
-            ? format(date, "dd MMM, yyyy h:mm a", { locale })
+            ? format(date, "dd MMM, yyyy h:mm", { locale })
             : format(date, "dd MMM, yyyy HH:mm", { locale })
     } else {
         dateString = format(date, "dd MMM, yyyy", { locale })
@@ -716,7 +716,7 @@ const RangeDatePicker = ({
     enableYearNavigation = false,
     locale = enUS,
     showTimePicker,
-    placeholder = "Select date range",
+    placeholder = "Seleccione un rango de fechas",
     hasError,
     translations,
     align = "center",

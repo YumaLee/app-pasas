@@ -30,15 +30,15 @@ const Drawer: FC<DrawerProps> = ({ isOpen, onClose }) => {
       >
         <div className="flex h-full">
           <div className="w-1/3 bg-gray-100 p-6">
-            <h2 className="text-lg font-semibold mb-4">Event Settings</h2>
+            <h2 className="text-lg font-semibold mb-4">Configuración del evento</h2>
             <nav className="space-y-4">
               <NavItem icon={Users} text="Hosts" active={activeTab === "Hosts"} onClick={() => setActiveTab("Hosts")} />
               <NavItem icon={ClipboardList} text="RSVPs" active={activeTab === "RSVPs"} onClick={() => setActiveTab("RSVPs")} />
-              <NavItem icon={ClipboardList} text="Questionnaire" active={activeTab === "Questionnaire"} onClick={() => setActiveTab("Questionnaire")} />
+              <NavItem icon={ClipboardList} text="Cuestionario" active={activeTab === "Cuestionario"} onClick={() => setActiveTab("Cuestionario")} />
 
-              <NavItem icon={Eye} text="Display & Privacy" active={activeTab === "Display & Privacy"} onClick={() => setActiveTab("Display & Privacy")} />
-              <NavItem icon={DollarSign} text="Chip In" active={activeTab === "Chip In"} onClick={() => setActiveTab("Chip In")} />
-              <NavItem icon={Bell} text="Auto-Reminders" active={activeTab === "Auto-Reminders"} onClick={() => setActiveTab("Auto-Reminders")} />
+              <NavItem icon={Eye} text="Privacidad" active={activeTab === "Privacidad"} onClick={() => setActiveTab("Privacidad")} />
+              <NavItem icon={DollarSign} text="Costo" active={activeTab === "Costo"} onClick={() => setActiveTab("Costo")} />
+              <NavItem icon={Bell} text="Recordatorios" active={activeTab === "Recordatorios"} onClick={() => setActiveTab("Recordatorios")} />
             </nav>
           </div>
 
@@ -52,11 +52,11 @@ const Drawer: FC<DrawerProps> = ({ isOpen, onClose }) => {
 
             {activeTab === "Hosts" && <ManageHosts />}
             {activeTab === "RSVPs" && <ManageRSVPs />}
-            {activeTab === "Questionnaire" && <Questionnaire />}
+            {activeTab === "Cuestionario" && <Questionnaire />}
 
-            {activeTab === "Display & Privacy" && <DisplayPrivacy />}
-            {activeTab === "Chip In" && <ChipIn />}
-            {activeTab === "Auto-Reminders" && <AutoReminders />}
+            {activeTab === "Privacidad" && <DisplayPrivacy />}
+            {activeTab === "Costo" && <ChipIn />}
+            {activeTab === "Recordatorios" && <AutoReminders />}
           </div>
         </div>
       </div>

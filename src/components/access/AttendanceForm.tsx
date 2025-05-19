@@ -101,6 +101,13 @@ export default function AttendanceForm({
 
         setOpenMessage(false);
         setOpenCode(true);
+      } else {
+        let message = '';
+        if (response.data.messages && response.data.messages.length > 0) {
+          message = response.data.messages.map((element: string) => element).join(' ');
+        }
+        toast.error(message);
+
       }
     } else {
       toast.error('whatsapp esta desarrollo!')

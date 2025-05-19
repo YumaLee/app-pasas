@@ -1,27 +1,82 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { EventForm } from "@/components/EventForm";
 import { EventSettings } from "@/components/EventSettings";
 import { ActionButtons } from "@/components/ActionButtons";
-import { Link, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import LoadingOverlay from "@/components/ui/loadingOverlay";
 import { HeaderHome } from "@/components/header/HeaderHome";
 import Drawer from "@/components/drawer/Drawer";
 import FloatingPetals from "@/components/animations/FloatingPetals";
+import eventoService from "@/shared/services/EventoService";
+import { usePaymentStore } from "@/store/settingPayment";
 
+
+
+interface Payment {
+  requireAmount: string;
+  currency: string;
+  amount: number;
+  methodPay: number;
+  codigo: string;
+}
 export function TemplateNewPage() {
-  const [selectedFont, setSelectedFont] = useState("Classic");
+
   const [showSettings, setShowSettings] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
+  const [itemEvent, setItemEvent] = useState<any>({});
 
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
+  const { settingPayment } = usePaymentStore((state) => state);
 
-  const handleSave = (data: any) => {
-    console.log(data)
-  }
+  const { codigo } = useParams();
+  const hasFetched = useRef(false);
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      if (!codigo || hasFetched.current) return;
+      hasFetched.current = true;
+      var response = await eventoService.getByCode(codigo);
+      if (response.status === 200) {
+
+        response.data.isEdit = true;
+        response.data.codigo = codigo;
+        setItemEvent(response.data);
+
+        if (response.data.precio > 0) {
+          const defaultPayment: Payment = {
+            requireAmount: "2",
+            currency: "1",
+            amount: parseFloat(response.data.precio),
+            methodPay: 1,
+            codigo: response.data.moneda
+          };
+          settingPayment(defaultPayment);
+        }
+      } else {
+
+        //dialog.warning(<ul>{response.data.messages.map(item => (<li>{item}</li>))}</ul>);
+        console.error("Error al obtener los datos:");
+      }
+
+    } catch (error) {
+      console.error("Error al obtener los datos:", error);
+      setIsLoading(false);
+    }
+    setIsLoading(false);
+  };
+
+
+
+  useEffect(() => {
+    if (typeof codigo !== "string" || codigo.trim() === "") return;
+    fetchData();
+  }, [codigo]);
+
 
 
   return (
@@ -61,11 +116,8 @@ export function TemplateNewPage() {
       <main className="pt-10 pb-32 md:pb-12 px-4">
         <div className="max-w-[1200px] mx-auto">
           <EventForm
-            selectedFont={selectedFont}
-            onFontSelect={setSelectedFont}
-            onSave={handleSave}
             onSettingsClick={() => setShowDrawer(true)}
-
+            eventData={itemEvent}
           />
         </div>
       </main>
@@ -76,8 +128,6 @@ export function TemplateNewPage() {
       />
 
       {/* Drawer */}
-
-
       <Drawer
         isOpen={showDrawer}
         onClose={() => setShowDrawer(!showDrawer)}
@@ -94,7 +144,7 @@ export function TemplateNewPage() {
             />
           </div>
           <Button className="w-full bg-gradient-to-r from-[#7226ff] to-[#f042ff] hover:from-[#5e1fdc] hover:to-[#d936d3] text-white py-4 text-lg font-medium rounded-none">
-            SAVE DRAFT
+            Guardar
           </Button>
         </div>
       </div>

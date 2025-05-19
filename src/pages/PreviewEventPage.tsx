@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useParams } from "react-router-dom";
 import imageCompression from 'browser-image-compression';
-import { MoreHorizontal, Crown, MapPin, Music, Users, Link as LinkIcon, Camera, XCircle, ChevronLeft, FileArchive } from "lucide-react";
+import { MoreHorizontal, Crown, MapPin, Music, Users, Link as LinkIcon, Camera, FileKey, ChevronLeft, FileArchive } from "lucide-react";
 import { formatInTimeZone } from "date-fns-tz";
 import { AddToCalendarButton } from 'add-to-calendar-button-react';
 import toast, { Toaster } from 'react-hot-toast';
@@ -31,6 +31,7 @@ import Drawer from "@/components/drawer/Drawer";
 import AccessOverlay from "@/components/access/AccessOverlay";
 import AttendanceForm from "@/components/access/AttendanceForm";
 import EventPayment from "@/components/payment/Payment";
+import ItemTickets from "@/components/tickets/Tickets";
 
 
 const iconSets = [
@@ -50,6 +51,7 @@ export function PreviewEventPage() {
     const [openInvite, setOpenInvite] = useState(false);
     const [openAccess, setOpenAccess] = useState(false);
     const [openPay, setOpenPay] = useState(false);
+    const [openTicket, setOpenTicket] = useState(false);
 
     const zonaHorariaUsuario = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -230,6 +232,12 @@ export function PreviewEventPage() {
         setIsLoading(false);
     };
 
+    const handleTicket = async () => {
+        setIsLoading(true);
+        setOpenTicket(true)
+        setIsLoading(false);
+    };
+
     if (error || !itemEvent) return <NotFoundPage />;
 
     return (
@@ -303,7 +311,7 @@ export function PreviewEventPage() {
                     <div className="fixed right-0 top-1/2 -translate-y-1/2 z-50 hidden md:flex flex-col">
                         <div className="w-[100px] bg-[#100229] py-6 flex flex-col items-center gap-4">
                             <ActionButtons
-                                onEditClick={() => navigate(`/event/edit/${codigo}`)}
+                                onEditClick={() => navigate(`/templates/${codigo}`)}
                                 onBlastClick={() => console.log('blass')}
                                 onGoingClick={() => console.log('goin')}
                                 onInviteClick={() => console.log('invited')}
@@ -387,6 +395,14 @@ export function PreviewEventPage() {
                         onClose={() => setOpenPay(false)}
                         dataItem={itemEvent}
                         open={openPay}
+                    />
+                ) : null}
+
+                {isAuth && openTicket ? (
+                    <ItemTickets
+                        onClose={() => setOpenTicket(false)}
+                        dataItem={itemEvent}
+                        open={openTicket}
                     />
                 ) : null}
 
@@ -506,7 +522,7 @@ export function PreviewEventPage() {
                             </div>
                             <div className="flex items-center gap-3 text-white/70">
                                 <Users className="h-5 w-5 flex-shrink-0" />
-                                <span>{itemEvent.capacidadMaxima}/{countAsistente} Quedan lugares</span>
+                                <span>{itemEvent.capacidadMaxima}/{itemEvent.capacidadMaxima-countAsistente} Quedan lugares</span>
                             </div>
                             <div className="flex items-center gap-3 text-white/70">
                                 <Music className="h-5 w-5 flex-shrink-0" />
@@ -551,15 +567,17 @@ export function PreviewEventPage() {
 
 
                             {/* Photo Album Section */}
-                            <div className="space-y-4">
+                            <div className="space-y-4 mt-5">
                                 <div className="flex items-center justify-between">
                                     <h2 className="text-xl md:text-2xl font-bold text-white">Photo Album</h2>
                                     <Button
-                                        variant="ghost"
+                                        variant="primary"
                                         className="text-white/70 hover:text-white hover:bg-white/10 gap-2"
+                                        onClick={handleTicket}
+                                        disabled={isAuth ? !paymentStore.isPaid : true}
                                     >
-                                        <LinkIcon className="h-4 w-4" />
-                                        <span className="hidden sm:inline">Copy link</span>
+                                        <FileKey className="h-5 w-5" />
+                                        <span className="hidden sm:inline">Boletos</span>
                                     </Button>
 
                                     <label

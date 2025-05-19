@@ -104,7 +104,7 @@ const ChipIn = () => {
         <div className="space-y-6">
             <div>
                 <h2 className="text-lg font-semibold flex items-center gap-1">
-                    Chip In <Info className="w-4 h-4 text-muted-foreground" />
+                    Costo <Info className="w-4 h-4 text-muted-foreground" />
                 </h2>
                 <p className="text-sm text-muted-foreground">
                     Solicitar dinero a los invitados. Se les pedirá que paguen al confirmar su asistencia.
@@ -117,7 +117,7 @@ const ChipIn = () => {
 
             <div className="border rounded-md p-4 space-y-4 bg-muted/30">
                 <div className="flex justify-between items-center">
-                    <span className="font-medium">Chip In</span>
+                    <span className="font-medium">Costo</span>
                     <Select value={requireAmount} onValueChange={handleSelect}>
                         <SelectTrigger className="w-50">
                             <SelectValue placeholder="Required amount" />

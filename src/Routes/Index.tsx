@@ -6,7 +6,6 @@ import { Preview } from "@/components/preview/Preview.tsx";
 import { EventoPage } from "@/pages/EventoPage";
 import { PreviewEventPage } from "@/pages/PreviewEventPage";
 
-import { EditEvento } from "@/components/evento/Form/Edit";
 import ProtectedRoute from "@/Routes/ProtectedRoute";
 import setupInterceptors from '../shared/services/_base/interceptor.tsx';
 import { LoadScriptNext } from "@react-google-maps/api";
@@ -27,11 +26,12 @@ function Index() {
                 <Route path="e/:codigo" element={<PreviewEventPage />} />
 
                 <Route element={<ProtectedRoute> <Outlet /> </ProtectedRoute>}>
-                    <Route path="/templates/:category" element={<TemplateNewPage />} />
+                    <Route path="/templates/:codigo" element={<TemplateNewPage />} />
+                    <Route path="/templates" element={<TemplateNewPage />} />
+
                     <Route path="/preview" element={<Preview />} />
                     <Route path="/events" element={<EventoPage />} />
-                    <Route path="/event/edit/:codigo" element={<EditEvento />} />
-                    
+
                     <Route path="/payment/success" element={<PaymentSuccess />} />
                     <Route path="/payment/error" element={<PaymentError />} />
 

@@ -47,7 +47,7 @@ export function HeaderHome({ isCreate, checkedMotion, onReduceMotion, onEdit }: 
                                 <>
                                     <Button
                                         className="bg-[#8B3DFF] hover:bg-[#9B4DFF] text-white gap-2 px-3 md:px-4"
-                                        onClick={() => navigate('/templates/new')}                                    >
+                                        onClick={() => navigate('/templates')}                                    >
                                         <Plus className="w-4 h-4" />
                                         <span className="hidden md:inline">Crear</span>
                                     </Button>
