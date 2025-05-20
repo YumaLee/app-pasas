@@ -43,88 +43,15 @@ interface Evento {
 }
 
 const tabs = [
-  { id: 1, name: "Upcoming", count: 1, icon: Clock },
-  { id: 2, name: "Hosting", count: 0, icon: Crown },
-  { id: 3, name: "Openinvite", count: 0, icon: Globe },
-  { id: 4, name: "Attended", count: 0, icon: Clock }
+  { id: 1, name: "Proxima", count: 1, icon: Clock },
+  { id: 2, name: "Hospedaje", count: 0, icon: Crown },
+  { id: 3, name: "Invitacion", count: 0, icon: Globe },
+  { id: 4, name: "Asistio", count: 0, icon: Clock }
 ];
 
-const tabContent = {
-  Upcoming: {
-    cards: [
-      {
-        image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30",
-        title: "yumaa",
-        status: "TBD",
-        host: "julia Lopes",
-        hostInitials: "JL"
-      },
-      {
-        image: "https://images.unsplash.com/photo-1496024840928-4c417adf211d",
-        title: "Birthday Bash",
-        status: "Tomorrow",
-        host: "julia Lopes",
-        hostInitials: "JL"
-      },
-      {
-        image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7",
-        title: "Game Night",
-        status: "Next Week",
-        host: "julia Lopes",
-        hostInitials: "JL"
-      },
-      {
-        image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7",
-        title: "Game Night",
-        status: "Next Week",
-        host: "julia Lopes",
-        hostInitials: "JL"
-      },
-      {
-        image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7",
-        title: "Game Night",
-        status: "Next Week",
-        host: "julia Lopes",
-        hostInitials: "JL"
-      },
-      {
-        image: "https://images.unsplash.com/photo-1496024840928-4c417adf211d",
-        title: "Birthday Bash",
-        status: "Tomorrow",
-        host: "julia Lopes",
-        hostInitials: "JL"
-      }
-    ]
-  },
-  Hosting: {
-    cards: []
-  },
-  Openinvite: {
-
-    cards: [
-      {
-        image: "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf",
-        title: "Community Meetup",
-        status: "Open",
-        host: "Community",
-        hostInitials: "CM"
-      },
-      {
-        image: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d",
-        title: "Tech Talk",
-        status: "Open",
-        host: "Tech Group",
-        hostInitials: "TG"
-      }
-    ]
-  },
-  Attended: {
-    cards: []
-  }
-};
 
 export function EventoPage() {
-  const [activeTab, setActiveTab] = useState("Upcoming");
+  const [activeTab, setActiveTab] = useState("Proxima");
   const [reduceMotion, setReduceMotion] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -214,12 +141,10 @@ export function EventoPage() {
   }
 
   const renderTabContent = () => {
-    const content = tabContent[activeTab as keyof typeof tabContent];
-    const hasCards = content.cards.length > 0;
 
     return (
       <div className="mb-12 md:mb-16">
-        {hasCards ? (
+        {activeTab === "Hospedaje" ? (
           <Carousel
             opts={{
               align: "start",
@@ -302,10 +227,6 @@ export function EventoPage() {
                               😶
                             </div>
                           )}
-
-
-
-
                           <span className="text-sm text-white/70">{card.organizador}</span>
                         </div>
                       </div>
@@ -315,21 +236,21 @@ export function EventoPage() {
               ))}
 
               {/* New Event Card - Only show in Hosting tab */}
-              {activeTab === "Hosting" && (
+              {activeTab === "Hospedaje" && (
                 <CarouselItem className="pl-4 basis-full sm:basis-1/4 lg:basis-1/5">
-                  <button
+                  <div
                     className="aspect-square rounded-xl border-2 border-dashed border-white/10 flex items-center justify-center cursor-pointer hover:border-white/20 transition-colors group"
                     onClick={() => navigate('/templates/new')}
                   >
                     <div className="text-center">
                       <span className="text-3xl mb-2 block text-white/50 group-hover:text-white/70">+</span>
-                      <span className="text-sm text-white/50 group-hover:text-white/70">NEW EVENTss</span>
+                      <span className="text-sm text-white/50 group-hover:text-white/70">Nuevo Evento</span>
                     </div>
-                  </button>
+                  </div>
                 </CarouselItem>
               )}
             </CarouselContent>
-            {content.cards.length > 1 && (
+            {listaEvent.length > 1 && (
               <>
                 <CarouselPrevious className="hidden md:flex -left-12 text-white border-white/20 hover:bg-white/10 hover:text-white" />
                 <CarouselNext className="hidden md:flex -right-12 text-white border-white/20 hover:bg-white/10 hover:text-white" />
@@ -339,19 +260,19 @@ export function EventoPage() {
         ) : (
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mb-4">
-              {activeTab === "Hosting" ? <Crown className="w-8 h-8 text-white/50" /> :
-                activeTab === "Openinvite" ? <Globe className="w-8 h-8 text-white/50" /> :
+              {activeTab === "Hospedaje" ? <Crown className="w-8 h-8 text-white/50" /> :
+                activeTab === "Invitacion" ? <Globe className="w-8 h-8 text-white/50" /> :
                   <Clock className="w-8 h-8 text-white/50" />}
             </div>
             <h3 className="text-xl text-white font-medium mb-2">
-              No {activeTab.toLowerCase()} events
+              No {activeTab.toLowerCase()} events  sssss
             </h3>
             <p className="text-white/70 max-w-sm">
-              {activeTab === "Hosting" ? "Create an event to get started!" :
-                activeTab === "Openinvite" ? "No open invites available right now" :
+              {activeTab === "Hospedaje" ? "Create an event to get started!" :
+                activeTab === "Invitacion" ? "No open invites available right now" :
                   "You don't have any events in this category"}
             </p>
-            {activeTab === "Hosting" && (
+            {activeTab === "Hospedaje" && (
               <Button
                 className="mt-6 bg-[#8B3DFF] hover:bg-[#9B4DFF] text-white"
                 onClick={() => navigate('/templates/new')}
@@ -426,7 +347,7 @@ export function EventoPage() {
           {/* Tab Content */}
           {renderTabContent()}
 
-          {/* Mutuals Section */}
+       {/* Mutuals Section */}
           <div className="py-12 md:py-16 text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               Mutuals
