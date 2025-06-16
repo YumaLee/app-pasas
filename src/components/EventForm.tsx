@@ -29,7 +29,6 @@ import { PullGuest } from "@/components/PullGuest";
 import eventoService from "@/shared/services/EventoService";
 import { AutocompleteGoogle } from "./maps/AutocompleteGoogle";
 import { EmojiModal } from "./EmojiModal";
-import { useEventosStore } from "@/store/useEventosStore";
 
 const fontStyles = ["Classic", "Eclectic", "Fancy", "Simple"] as const;
 
@@ -134,6 +133,7 @@ function EventForm({ onSettingsClick, eventData }: EventFormProps) {
   };
 
   const onSubmit = async (data: FormValues) => {
+    console.log("Datos del formulario:", data);
     setIsLoading(true);
     if (dateValue?.from != null && dateValue?.to != null) {
       const fechaStartUtc = formatISO(dateValue?.from, { representation: "complete" });
@@ -154,8 +154,6 @@ function EventForm({ onSettingsClick, eventData }: EventFormProps) {
 
     var response = data.isEdit ? await eventoService.actualizar(data) : await eventoService.registrar(data);
     if (response.status === 200) {
-
-      await useEventosStore.getState().refreshEventos("Hospedaje",  _profile?.telefono!);
 
       toast.success(data.isEdit ? 'El evento ha sido actualizado con éxito.!' : 'El evento ha sido registrado con éxito.!')
       resetPayment();

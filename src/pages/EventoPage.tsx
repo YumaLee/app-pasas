@@ -29,7 +29,6 @@ import { HeaderHome } from "@/components/header/HeaderHome";
 import DialogDefault from "@/components/ui/dialog-confirm";
 import { usePaymentStore } from "@/store/settingPayment";
 import { usePrivacyStore } from "@/store/privaceStore";
-import { useEventosStore } from "@/store/useEventosStore";
 
 
 interface Evento {
@@ -44,19 +43,15 @@ interface Evento {
 }
 
 const tabs = [
-  { id: 1, name: "Proxima", description: 'Próximos eventos', count: 1, icon: Clock },
-  { id: 2, name: "Hospedaje", description: 'Anfitrion', count: 0, icon: Crown },
-  { id: 3, name: "Invitacion", description: 'Invitación abierta', count: 0, icon: Globe },
-  { id: 4, name: "Asistio", description: 'Asistencia', count: 0, icon: Clock },
-  { id: 4, name: "Pasado", description: 'Todos los eventos pasados', count: 0, icon: Clock },
-
+  { id: 1, name: "Proxima", count: 1, icon: Clock },
+  { id: 2, name: "Hospedaje", count: 0, icon: Crown },
+  { id: 3, name: "Invitacion", count: 0, icon: Globe },
+  { id: 4, name: "Asistio", count: 0, icon: Clock }
 ];
 
 
-
 export function EventoPage() {
-  const [activeTab, setActiveTab] = useState<"Proxima" | "Hospedaje" | "Invitacion" | "Asistio" | "Pasado">("Proxima");
-
+  const [activeTab, setActiveTab] = useState("Proxima");
   const [reduceMotion, setReduceMotion] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -73,24 +68,15 @@ export function EventoPage() {
   const { resetPrivacy } = usePrivacyStore((state) => state);
   const hasFetched = useRef(false);
 
-  const { eventos, fetchEventos, loading, hasMore } = useEventosStore();
-
   const navigate = useNavigate();
 
 
 
   useEffect(() => {
+    fetchData();
     resetPayment();
     resetPrivacy();
-  }, [_profile]);
-
-  // ✅ Llamar a Zustand para cargar eventos del tab activo
-  useEffect(() => {
-    if (!_profile) return;
-    fetchEventos(activeTab, _profile.telefono!);
-  }, [activeTab, _profile]);
-
-  const eventosTab = eventos[activeTab];
+  }, [_profile]); // Se ejecuta cuando perfil cambia
 
 
   const handleSave = async (data: any) => {
@@ -110,25 +96,26 @@ export function EventoPage() {
   }
 
 
-  /*   const fetchData = async () => {
-      try {
-        if (!_profile || hasFetched.current) return;
-        hasFetched.current = true; // Marca que ya se hizo la petición
-        setIsLoading(true);
-        var response = await eventoService.listarPorAnfitrion(_profile.telefono!);
-        if (response.status === 200) {
-          const data = response.data;
-          setIsListEvent(data)
-        }
-        if (response.status === 400) {
-          return;
-        }
-        setIsLoading(false);
-  
-      } catch (error) {
-        console.error("Error al obtener los datos:", error);
+  const fetchData = async () => {
+    try {
+      if (!_profile || hasFetched.current) return;
+      hasFetched.current = true; // Marca que ya se hizo la petición
+      setIsLoading(true);
+      var response = await eventoService.listarPorAnfitrion(_profile.telefono!);
+      if (response.status === 200) {
+        const data = response.data;
+        setIsListEvent(data)
       }
-    }; */
+      if (response.status === 400) {
+        //dialog.warning(<ul>{response.data.messages.map(item => (<li>{item}</li>))}</ul>);
+        return;
+      }
+      setIsLoading(false);
+
+    } catch (error) {
+      console.error("Error al obtener los datos:", error);
+    }
+  };
 
 
   const openDeleteModal = (codigo: string) => {
@@ -157,25 +144,30 @@ export function EventoPage() {
 
     return (
       <div className="mb-12 md:mb-16">
-        {eventosTab.length > 0 ? (
-          // 🎠 Carousel sólo si hay eventos
+        {activeTab === "Hospedaje" ? (
           <Carousel
-            opts={{ align: "start", loop: true }}
+            opts={{
+              align: "start",
+              loop: true,
+            }}
             className="w-full"
           >
             <CarouselContent className="-ml-4">
-              {eventosTab.map((card, index) => (
+              {listaEvent.map((card, index) => (
                 <CarouselItem key={index} className="pl-4 basis-full sm:basis-1/4 lg:basis-1/5">
                   <div className="group relative aspect-square bg-neutral-900 rounded-xl overflow-hidden">
-                    {card.foto ? (
+
+                    {card.foto ?
                       <img
                         src={card.foto}
                         alt={card.titulo}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      /> :
+                      <ImageDown
+                        className="w-full h-full object-cover   bg-neutral-300 group-hover:scale-105 transition-transform duration-300"
                       />
-                    ) : (
-                      <ImageDown className="w-full h-full object-cover bg-neutral-300 group-hover:scale-105 transition-transform duration-300" />
-                    )}
+
+                    }
 
                     <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60">
                       <div className="absolute top-4 right-4">
@@ -189,7 +181,11 @@ export function EventoPage() {
                               <MoreHorizontal className="w-5 h-5" />
                             </Button>
                           </PopoverTrigger>
-                          <PopoverContent className="w-48 p-0 bg-[#1A0505] border-neutral-800" side="left" align="start">
+                          <PopoverContent
+                            className="w-48 p-0 bg-[#1A0505] border-neutral-800"
+                            side="left"
+                            align="start"
+                          >
                             <div className="py-2">
                               <button
                                 className="w-full px-3 py-2 text-left text-sm flex items-center gap-2 text-white/70 hover:bg-white/10 hover:text-white"
@@ -211,20 +207,25 @@ export function EventoPage() {
                       </div>
 
                       <div className="absolute top-4 left-4">
-                        <span className="px-2 py-1 backdrop-blur-sm rounded-md text-white text-sm bg-neutral-500/20">
+                        <span className="px-2 py-1 backdrop-blur-sm rounded-md text-white text-sm bg-neutral-500/20"
+                        >
                           <span className="text-sm text-white/70">Organizado Por</span>
+
                         </span>
                       </div>
-
-                      <div className="absolute bottom-4 left-4 right-4" onClick={() => handlePreview(card.codigo)}>
+                      <div className="absolute bottom-4 left-4 right-4"
+                        onClick={() => handlePreview(card.codigo)}
+                      >
                         <h3 className="text-lg font-bold text-white mb-2">{card.titulo}</h3>
                         <div className="flex items-center gap-2">
                           {card.avatar ? (
                             <Avatar>
-                              <AvatarImage src={card.avatar} alt={card.organizador} />
+                              <AvatarImage className="Avatar Image" src={card.avatar} alt={card.organizador} />
                             </Avatar>
                           ) : (
-                            <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center text-2xl">😶</div>
+                            <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center text-2xl">
+                              😶
+                            </div>
                           )}
                           <span className="text-sm text-white/70">{card.organizador}</span>
                         </div>
@@ -234,7 +235,7 @@ export function EventoPage() {
                 </CarouselItem>
               ))}
 
-              {/* Card para crear nuevo evento */}
+              {/* New Event Card - Only show in Hosting tab */}
               {activeTab === "Hospedaje" && (
                 <CarouselItem className="pl-4 basis-full sm:basis-1/4 lg:basis-1/5">
                   <div
@@ -249,7 +250,7 @@ export function EventoPage() {
                 </CarouselItem>
               )}
             </CarouselContent>
-            {eventosTab.length > 1 && (
+            {listaEvent.length > 1 && (
               <>
                 <CarouselPrevious className="hidden md:flex -left-12 text-white border-white/20 hover:bg-white/10 hover:text-white" />
                 <CarouselNext className="hidden md:flex -right-12 text-white border-white/20 hover:bg-white/10 hover:text-white" />
@@ -257,7 +258,6 @@ export function EventoPage() {
             )}
           </Carousel>
         ) : (
-          // 🪧 Mensaje cuando no hay eventos
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mb-4">
               {activeTab === "Hospedaje" ? <Crown className="w-8 h-8 text-white/50" /> :
@@ -265,19 +265,19 @@ export function EventoPage() {
                   <Clock className="w-8 h-8 text-white/50" />}
             </div>
             <h3 className="text-xl text-white font-medium mb-2">
-              No hay eventos en esta categoría
+              No {activeTab.toLowerCase()} events  sssss
             </h3>
             <p className="text-white/70 max-w-sm">
-              {activeTab === "Hospedaje" ? "Crea un evento para comenzar" :
-                activeTab === "Invitacion" ? "No hay invitaciones abiertas" :
-                  "Aún no tienes eventos en esta sección"}
+              {activeTab === "Hospedaje" ? "Create an event to get started!" :
+                activeTab === "Invitacion" ? "No open invites available right now" :
+                  "You don't have any events in this category"}
             </p>
             {activeTab === "Hospedaje" && (
               <Button
                 className="mt-6 bg-[#8B3DFF] hover:bg-[#9B4DFF] text-white"
                 onClick={() => navigate('/templates/new')}
               >
-                Crear Evento
+                Create Event
               </Button>
             )}
           </div>
@@ -326,11 +326,11 @@ export function EventoPage() {
                   ? "text-white"
                   : "text-white/50 hover:text-white"
                   }`}
-                onClick={() => setActiveTab(tab.name as "Proxima" | "Hospedaje" | "Invitacion" | "Asistio" | "Pasado")}
+                onClick={() => setActiveTab(tab.name)}
               >
                 <span className="flex items-center gap-2">
                   <tab.icon className="w-4 h-4" />
-                  {tab.description}
+                  {tab.name}
                   {tab.count > 0 && (
                     <span className="bg-white/10 px-1.5 py-0.5 rounded-full text-xs">
                       {tab.count}
@@ -347,7 +347,7 @@ export function EventoPage() {
           {/* Tab Content */}
           {renderTabContent()}
 
-          {/* Mutuals Section */}
+       {/* Mutuals Section */}
           <div className="py-12 md:py-16 text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               Mutuals
@@ -374,7 +374,7 @@ export function EventoPage() {
               <span className="hidden md:inline">|</span>
               <Link to="/careers" className="hover:text-white">Careers</Link>
               <span className="hidden md:inline">|</span>
-
+          
             </div>
           </div>
         </div>
