@@ -128,7 +128,7 @@ export function SmsVerification({ phone, loading, timer, onResendCode, textColor
                   ...Cargando
                 </>
               ) : (
-                'I AGREE'
+                'Aceptar'
               )}
 
             </Button>

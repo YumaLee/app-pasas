@@ -53,9 +53,11 @@ class EventoService {
         formData.append("file", file, file.name);
         formData.append("codigo", String(codigo));
 
-        const response = await axios.post(`${RUTA}/evento/subir-imagen`, formData, {  headers: {
-            "Content-Type": "multipart/form-data",
-          },})
+        const response = await axios.post(`${RUTA}/evento/subir-imagen`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        })
             .then(response => {
                 return response;
             })
@@ -69,15 +71,17 @@ class EventoService {
 
     //QUERIES
 
-    async listarPorAnfitrion(usuario: string): Promise<AxiosResponse | any> {
+    async listarPorAnfitrion(tab: string, telefono: string, page: number): Promise<AxiosResponse | any> {
         try {
-            const response: AxiosResponse = await axios.get(`${RUTA}/evento/list/${usuario}`);
+            const response: AxiosResponse = await axios.get(`${RUTA}/evento/paginacion?tab=${tab}&telefono=${telefono}&page=${page}`);
             return response;
         } catch (error) {
             console.error(error);
             return (error as AxiosError).response ? (error as AxiosError).response : error;
         }
     }
+
+    //const res = await fetch(`/api/eventos?tab=${tab}&telefono=${telefono}&page=${page}`);
 
     async getByCode(code: string): Promise<AxiosResponse | any> {
         try {

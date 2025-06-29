@@ -12,6 +12,7 @@ import { FormUsuario } from "@/components/usuario/FormUsuario";
 import { useAuthStore } from "@/store/authStore";
 
 import 'react-phone-input-2/lib/style.css';
+import toast, { Toaster } from 'react-hot-toast';
 
 import userService from "@/shared/services/UserService";
 import verifyService from "@/shared/services/VerifyService";
@@ -54,7 +55,6 @@ export function LoginContent() {
 
 
   const handleSendCode = async (method: 'sms' | 'whatsapp') => {
-    debugger
     setIsLoading(true);
     if (method === 'sms') {
       var data = form.getValues();
@@ -64,6 +64,11 @@ export function LoginContent() {
         setShowVerification(true);
       }
       setIsLoading(false);
+    } else {
+      toast.success('whatsapp en desarrollo!')
+
+      setIsLoading(false);
+
     }
   };
 
@@ -71,8 +76,10 @@ export function LoginContent() {
     setIsLoading(true)
 
     var response = await verifyService.verificarSMs(data);
-    debugger
-    console.log(response)
+    console.log(response);
+
+    setIsLoading(false);
+    
     if (response.status === 200) {
       setShowVerification(false);
       var data = response.data;
@@ -88,7 +95,11 @@ export function LoginContent() {
       }
     }
     if (response.status === 400) {
-      //dialog.warning(<ul>{response.data.messages.map(item => (<li>{item}</li>))}</ul>);
+
+      setIsLoading(false);
+      toast.error(<ul>{response.data.messages.map((item: any) => (<li>{item}</li>))}</ul>);
+
+
       return;
     }
     setIsLoading(false)
@@ -164,7 +175,7 @@ export function LoginContent() {
                 <p className="text-white/60 flex items-center gap-2 justify-center">
                   <span>😴</span> ¿Cansada de ser desconectada?
                 </p>
-          
+
               </div>
             </form>)
         }
@@ -176,6 +187,10 @@ export function LoginContent() {
         onOpenChange={setShowSmsModal}
         //phoneNumber={form.watch('telefono')}
         onSendCode={handleSendCode}
+      />
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
       />
     </main>
   );
