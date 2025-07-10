@@ -487,7 +487,7 @@ function EventForm({ selectedFont, onFontSelect, onSettingsClick, eventData }: E
                                             <textarea
                                                 {...field}
                                                 autoComplete="off"
-                                                placeholder="Add a description of your event"
+                                                placeholder="Añade una descripción de tu evento"
                                                 className="w-full bg-transparent border-none focus:outline-none text-white/90 placeholder:text-white/50 resize-none h-32"
                                             />
                                             <div className="absolute right-3 top-3 text-purple-400">

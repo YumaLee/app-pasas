@@ -366,7 +366,7 @@ export function EventoPage() {
               </div>
             </div>
             <div className="mt-12 md:mt-16 text-sm text-white/50 flex flex-wrap items-center justify-center gap-2 md:gap-4 px-4">
-              <span>© 2025 Partiful™</span>
+              <span>© 2025 Pasas</span>
               <span className="hidden md:inline">|</span>
               <Link to="/terms" className="hover:text-white">Terms</Link>
               <span className="hidden md:inline">&</span>

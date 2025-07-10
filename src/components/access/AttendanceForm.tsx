@@ -278,7 +278,7 @@ export default function AttendanceForm({
             <div className="text-center space-y-6">
               <h2 className="text-2xl font-semibold">Obtenga su código</h2>
               <p className="text-gray-600 text-sm">
-                Elige recibir notificaciones de Partiful por SMS o WhatsApp
+                Elige recibir notificaciones de Pasas por SMS o WhatsApp
               </p>
 
               <div className="border p-4 rounded-md bg-green-50 text-green-700 flex items-center justify-center gap-3">

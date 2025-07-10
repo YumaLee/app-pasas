@@ -40,7 +40,7 @@ export function ImagePicker({ open, onOpenChange, onSelectImage }: ImagePickerPr
         const response = await PexelsService.getImages(searchQuery, 10);
         if (response.status === 200) {
           setPhotos(response.data.photos);
-
+          setSearchQuery(searchQuery);
         }
 
       } catch (err) {
@@ -70,7 +70,7 @@ export function ImagePicker({ open, onOpenChange, onSelectImage }: ImagePickerPr
           {/* Header */}
           <div className="p-4 border-b border-neutral-800">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold">Engagement</h2>
+              <h2 className="text-2xl font-bold">Imagen del Evento</h2>
             </div>
 
             {/* Categories */}
@@ -110,7 +110,7 @@ export function ImagePicker({ open, onOpenChange, onSelectImage }: ImagePickerPr
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
                 <Input
-                  placeholder="Search posters..."
+                  placeholder="Buscar posters..."
                   defaultValue={searchQuery}
                   onBlur={(e) => setSearchQuery(e.target.value.trim())}
                   onKeyDown={handleSearchInput}
@@ -133,7 +133,7 @@ export function ImagePicker({ open, onOpenChange, onSelectImage }: ImagePickerPr
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {photos.map((photo, i) => (
                   <div key={photo.id} className="relative group aspect-square rounded-lg overflow-hidden">
-        
+
                     <LazyLoadImage
                       alt={photo.photographer}
                       //onLoad={() => console.log(onLoadText)}
@@ -156,7 +156,7 @@ export function ImagePicker({ open, onOpenChange, onSelectImage }: ImagePickerPr
                           className="bg-purple-600 hover:bg-purple-700 text-white mb-2 w-32"
                           onClick={() => onSelectImage?.(photo.src.original)}
                         >
-                          SELECT
+                          Seleccionar
                         </Button>
                       </div>
                       <div className="absolute bottom-0 left-0 right-0 p-4">

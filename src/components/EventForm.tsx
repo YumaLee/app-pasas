@@ -213,7 +213,7 @@ function EventForm({ onSettingsClick, eventData }: EventFormProps) {
                     <Input
                       {...field}
                       placeholder="Nombre del Evento"
-                      className={`text-4xl font-bold bg-transparent border-none focus-visible:ring-2 text-white/90 placeholder:text-white/50 h-auto p-1 ${getFontStyle(form.watch("tipoFuente")!)}`}
+                      className={`text-3xl font-bold bg-transparent border-none focus-visible:ring-2 text-white/90 placeholder:text-white/50 h-auto p-1 ${getFontStyle(form.watch("tipoFuente")!)}`}
                       autoComplete="off"
                     />
                   </FormControl>
@@ -479,7 +479,7 @@ function EventForm({ onSettingsClick, eventData }: EventFormProps) {
                       <textarea
                         {...field}
                         autoComplete="off"
-                        placeholder="Add a description of your event"
+                        placeholder="Añade una descripción de tu evento"
                         className="w-full bg-transparent border-none focus:outline-none text-white/90 placeholder:text-white/50 resize-none h-32"
                       />
                       <div className="absolute right-3 top-3 text-purple-400">

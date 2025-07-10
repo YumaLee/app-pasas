@@ -3,6 +3,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  PopoverWithState
 } from "@/components/ui/popover";
 
 const iconSets = [
@@ -24,10 +25,6 @@ interface EventPreviewProps {
 }
 
 export function EventPreview({ selectedImage, selectedIcon, onEditClick, onSelectIcon }: EventPreviewProps) {
-
-  const handleSelect = (id: number) => {
-    onSelectIcon(id);
-  };
 
   return (
     <div className="relative">
@@ -59,7 +56,7 @@ export function EventPreview({ selectedImage, selectedIcon, onEditClick, onSelec
         <div className="bg-[#100229] rounded-xl p-4">
           <div className="flex items-center justify-between mb-4">
             <span className="text-sm text-neutral-400">RSVP Options</span>
-            <Popover>
+            {/*             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="outline" className="text-sm bg-[#2A1F1F] border-none text-white/70">
                   {!iconSets[selectedIcon - 1]?.name} ▼
@@ -76,12 +73,43 @@ export function EventPreview({ selectedImage, selectedIcon, onEditClick, onSelec
                         }`}
                       onClick={() => handleSelect(set.id)}
                     >
-                      {set.icon} {set.name}
+                      {set.icon} {set.name}XX
                     </button>
                   ))}
                 </div>
               </PopoverContent>
-            </Popover>
+            </Popover> */}
+
+
+            <PopoverWithState>
+              {(handleSelect) => (
+                <>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="text-sm bg-[#2A1F1F] border-none text-white/70">
+                      {!iconSets[selectedIcon - 1]?.name} ▼
+                    </Button>
+                  </PopoverTrigger>
+
+                  <PopoverContent className="w-48 p-0 bg-[#1A0505] border-neutral-800">
+                    <div className="py-2">
+                      {iconSets.map((set) => (
+                        <button
+                          key={set.id}
+                          className={`w-full px-4 py-2 text-left text-sm ${selectedIcon === set.id
+                            ? "bg-purple-500/20 text-white"
+                            : "text-white/70 hover:bg-white/10"
+                            }`}
+                          onClick={() => { handleSelect(set.id), onSelectIcon(set.id) }}
+                        >
+                          {set.icon} {set.name}
+                        </button>
+                      ))}
+                    </div>
+                  </PopoverContent>
+                </>
+              )}
+            </PopoverWithState>
+
           </div>
           <div className="grid grid-cols-3 gap-5">
             {iconSets.find(set => set.id === selectedIcon)?.icons.map((icon, index) => (
@@ -89,7 +117,7 @@ export function EventPreview({ selectedImage, selectedIcon, onEditClick, onSelec
                 key={index}
                 className="aspect-square rounded-full bg-[#7226ff] flex items-center justify-center text-white"
               >
-               <span className="text-5xl"> {icon}</span>
+                <span className="text-5xl"> {icon}</span>
               </div>
             ))}
           </div>

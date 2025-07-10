@@ -4,7 +4,7 @@ const blogPosts = [
   {
     image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7",
     title: "You're on The Guest List",
-    description: "Partiful is launching a blog. Here's why, and what to expect.",
+    description: "Pasas is launching a blog. Here's why, and what to expect.",
     author: {
       name: "Shreya Murthy",
       avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330"

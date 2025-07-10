@@ -35,7 +35,6 @@ export function LoginContent() {
   const [showSmsModal, setShowSmsModal] = useState(false);
   const [showVerification, setShowVerification] = useState(false);
 
-
   const setProfile = useAuthStore((state) => state.login);
 
   const form = useForm<FormValues>({
@@ -74,12 +73,9 @@ export function LoginContent() {
 
   const handleResendCode = async (data: any) => {
     setIsLoading(true)
-
     var response = await verifyService.verificarSMs(data);
-    console.log(response);
-
     setIsLoading(false);
-    
+
     if (response.status === 200) {
       setShowVerification(false);
       var data = response.data;
@@ -98,8 +94,6 @@ export function LoginContent() {
 
       setIsLoading(false);
       toast.error(<ul>{response.data.messages.map((item: any) => (<li>{item}</li>))}</ul>);
-
-
       return;
     }
     setIsLoading(false)
@@ -126,11 +120,8 @@ export function LoginContent() {
         {showVerification ?
           <SmsVerification
             loading={isLoading}
-            timer={12}
             phone={form.watch('telefono')}
             onResendCode={handleResendCode}
-            textColorClass="text-white/50"
-
           />
           :
           isFormVisible ?
